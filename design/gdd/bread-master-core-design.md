@@ -416,3 +416,90 @@ Aşağıdaki değerler oynanabilirlik testlerine göre ayarlanabilir. Güvenli a
 | `location_multiplier_step` | +0.5 | +0.3–+0.8 | Her şehirde gelir artışı hissi |
 | `daily_task_reward_rozet` | 500 | 200–1.000 | Premium para dengesini etkiler |
 | `recipe_unlock_threshold` | Tarife özgü | ±%20 | Tarif açma hızı akışını belirler |
+
+---
+
+## 6. EDGE CASES
+
+| # | Durum | Beklenen Davranış |
+|---|-------|-------------------|
+| 1 | Depo kapasitesi doldu, yeni ekmek pişti | Üretim durur; ekranda "Depo dolu — sat!" uyarısı göster |
+| 2 | Oyuncu 8 saatten fazla offline kaldı (örn. 20 saat) | Cap uygulanır: `min(20h, 8h)` = 8 saat üretim hesaplanır, fazlası kaybolur |
+| 3 | Müşteri süresi doldu, sipariş iptal oldu | Sipariş panodan kalkar; memnuniyet -10; altın düşmez |
+| 4 | 4 sipariş panosu doluyken yeni müşteri geldi | Yeni müşteri bekleme alanında bekler; 5. slot açık değilse geri döner |
+| 5 | VIP müşteri geldi ama ürün stokta yok | VIP "yarın gelirim" balonu gösterir; spawner 30 dk sonar tekrar dener |
+| 6 | Aynı tarifi tekrar tekrar sat koşulunu sağladı | Kilit açma tetiklenir sadece bir kez; fazla satış normal altın olarak sayılır |
+| 7 | Lokasyon açıldı ama kaynak yetersizleşti | Eski lokasyonlar çalışmaya devam eder; yeni lokasyonda başlangıç ekipmanı verilir |
+| 8 | Çalışan günlük maaşı ödenemedi (altın yetersiz) | Çalışan "greve çıkar" — efekt devre dışı kalır; ödeme yapılınca devam eder |
+| 9 | Oyuncu tüm upgrade'leri maxladı | Son upgrade "maxlandı" rozeti alır; yeni şehir veya prestige seçeneği önerilir |
+| 10 | Festival müşterisi etkinlik dışında tetiklendi | Etkinlik dışı festival müşterisi spawn edilmez; normal müşteri kuyruğu devam eder |
+| 11 | Koleksiyon %100 tamamlandı | "Dünya Ekmek Şampiyonu" unvanı + 50.000 altın + özel animasyon tetiklenir |
+| 12 | Otomatik hamur upgrade aktifken oyuncu da manuel yoğurdu | Her ikisi paralel çalışır; manuel yoğurma bonusu (%3x hız) ek olarak uygulanır |
+| 13 | Rozet (premium para) harcamak için yetersiz bakiye | İşlem engellenir; "Yeterli Rozet yok" tostu gösterilir |
+| 14 | Günlük görev süresi doldu ama tamamlanmadı | Görev sıfırlanır, ödül verilmez; yeni görev ertesi güne atanır |
+| 15 | Ağ bağlantısı kesildi (eğer sunucu senkronizasyonu varsa) | Lokal offline mod devreye girer; bağlantı gelince senkronize edilir |
+
+---
+
+## 7. BAĞIMLILIKLAR (DEPENDENCIES)
+
+```
+Lokasyon Sistemi
+    └── Tarif Sistemi (lokasyon yeni tarifler açar)
+    └── Görsel Progression (lokasyon fırın görünümünü değiştirir)
+
+Upgrade Ağacı
+    ├── Offline Üretim (kapasite + süre upgradeten gelir)
+    ├── Müşteri Sistemi (vitrin genişliği, sabır bonusu)
+    └── Teslimat Sistemi (sipariş kapasitesi)
+
+Çalışan Sistemi
+    └── Ekonomi Dengesi (günlük maaş = altın tüketimi)
+    └── Üretim Hızı (hamurcu, fırın ustası etkileri)
+
+Koleksiyon Sistemi
+    └── Tarif Sistemi (her tarif bir koleksiyon girişi)
+    └── Lokasyon Sistemi (bazı tarifler lokasyona bağlı)
+    └── Sezonsal Etkinlikler (festival tarifleri koleksiyona girer)
+
+Ekonomi (Altın + Rozet)
+    └── Tüm upgrade maliyetleri
+    └── Çalışan maaşları
+    └── Lokasyon açma maliyetleri
+    └── Rozet: VIP Lounge, dekorasyon, offline süre uzatma
+```
+
+---
+
+## 8. ACCEPTANCE CRITERIA
+
+### Temel Döngü
+- [ ] Oyuncu hamur yoğurma gesturunu 3 kez yapınca hamur "hazır" durumuna geçer
+- [ ] Hazır hamur fırına sürüklenince pişirme zamanlayıcısı başlar
+- [ ] Zamanlayıcı bitince ekmek vitrine taşınabilir hale gelir
+- [ ] Müşteri tap'ında altın animasyonu oynar ve sayaç artar
+
+### Offline Üretim
+- [ ] Uygulama kapatılıp 1 saat sonra açılınca doğru miktarda ekmek üretilmiş olur
+- [ ] 8 saatten uzun offline kalınca cap aşılmaz, fazla üretim olmaz
+- [ ] Geri dönüş animasyonu "X ekmek hazır!" mesajıyla tetiklenir
+
+### Upgrade Sistemi
+- [ ] Her upgrade seviyesinde maliyet `base * 3^(n-1)` formülüyle eşleşir
+- [ ] Max seviyeye ulaşan upgrade "maxlandı" göstergesine geçer
+- [ ] Upgrade efekti anında aktif olur (pişirme hızı, kapasite vs.)
+
+### Müşteri Sistemi
+- [ ] Süresi dolan sipariş panodan kaybolur ve memnuniyet düşer
+- [ ] VIP müşteri spawn oranı upgrade öncesi %5, VIP Lounge sonrası %7.5 civarındadır
+- [ ] Geç teslimatta altın %50 indirimle teslim edilir
+
+### Lokasyon Sistemi
+- [ ] Yeni lokasyon açılınca eski lokasyon üretmeye devam eder
+- [ ] Yeni lokasyona özgü tarifler tarif listesinde görünür hale gelir
+- [ ] Lokasyon açılış koşulu (altın + seviye) tam karşılanmadan buton aktif olmaz
+
+### Ekonomi
+- [ ] Günlük çalışan maaşları her gerçek gün düşülür
+- [ ] Altın yetersizse çalışan efekti devre dışı kalır, UI bunu gösterir
+- [ ] Rozet harcaması onay ekranı olmadan gerçekleşmez
