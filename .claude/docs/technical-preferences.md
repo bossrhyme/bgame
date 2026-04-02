@@ -5,44 +5,45 @@
 
 ## Engine & Language
 
-- **Engine**: [TO BE CONFIGURED — run /setup-engine]
-- **Language**: [TO BE CONFIGURED]
-- **Rendering**: [TO BE CONFIGURED]
-- **Physics**: [TO BE CONFIGURED]
+- **Engine**: Godot 4.6
+- **Language**: GDScript (primary), C++ via GDExtension (performance-critical systems only)
+- **Rendering**: Mobile Renderer (iOS/Android target), Forward+ for editor/desktop preview
+- **Physics**: Jolt (Godot 4.6 default)
 
 ## Naming Conventions
 
-- **Classes**: [TO BE CONFIGURED]
-- **Variables**: [TO BE CONFIGURED]
-- **Signals/Events**: [TO BE CONFIGURED]
-- **Files**: [TO BE CONFIGURED]
-- **Scenes/Prefabs**: [TO BE CONFIGURED]
-- **Constants**: [TO BE CONFIGURED]
+- **Classes**: PascalCase (e.g., `BreadOven`, `CustomerQueue`)
+- **Variables**: snake_case (e.g., `bake_time`, `gold_count`)
+- **Signals/Events**: snake_case geçmiş zaman (e.g., `bread_baked`, `customer_served`)
+- **Files**: snake_case, class adıyla eşleşir (e.g., `bread_oven.gd`)
+- **Scenes/Prefabs**: PascalCase, root node adıyla eşleşir (e.g., `BreadOven.tscn`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_OVEN_CAPACITY`, `OFFLINE_CAP_HOURS`)
 
 ## Performance Budgets
 
-- **Target Framerate**: [TO BE CONFIGURED]
-- **Frame Budget**: [TO BE CONFIGURED]
-- **Draw Calls**: [TO BE CONFIGURED]
-- **Memory Ceiling**: [TO BE CONFIGURED]
+- **Target Framerate**: 60 FPS (30 FPS minimum kabul edilebilir — mobil mid-range cihaz)
+- **Frame Budget**: 16.6ms (60fps) / 33ms (30fps)
+- **Draw Calls**: Mobil için max 100 draw call/frame
+- **Memory Ceiling**: 512MB (mobil mid-range hedef)
 
 ## Testing
 
-- **Framework**: [TO BE CONFIGURED]
-- **Minimum Coverage**: [TO BE CONFIGURED]
-- **Required Tests**: Balance formulas, gameplay systems, networking (if applicable)
+- **Framework**: GUT (Godot Unit Testing) — https://github.com/bitwes/Gut
+- **Minimum Coverage**: Tüm gameplay formülleri ve ekonomi sistemi
+- **Required Tests**: Offline üretim hesabı, upgrade maliyet ölçekleme, müşteri memnuniyeti, tarif açma koşulları
 
 ## Forbidden Patterns
 
-<!-- Add patterns that should never appear in this project's codebase -->
-- [None configured yet — add as architectural decisions are made]
+- Singleton/autoload'u veri deposu olarak kullanmak (sadece servis katmanı için)
+- Gameplay değerlerini kod içinde hardcode etmek (her zaman Resource/config dosyasından)
+- `_process()` içinde ağır hesaplama (idle sistemleri için timer bazlı güncelleme kullan)
 
 ## Allowed Libraries / Addons
 
-<!-- Add approved third-party dependencies here -->
-- [None configured yet — add as dependencies are approved]
+- **GUT** — unit test framework
+- *(Diğerleri eklendikçe buraya eklenecek)*
 
 ## Architecture Decisions Log
 
 <!-- Quick reference linking to full ADRs in docs/architecture/ -->
-- [No ADRs yet — use /architecture-decision to create one]
+- **2026-04-02** — Engine: Godot 4.6 seçildi (mobil 2D idle, GDScript, Jolt fizik)
