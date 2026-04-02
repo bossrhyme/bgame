@@ -7,6 +7,22 @@
 
 ---
 
+## OVERVIEW
+
+Ekmek Ustası, oyuncunun küçük bir Anadolu köy fırınından başlayarak Paris ve Tokyo'ya uzanan bir ekmek imparatorluğu kurduğu idle simülasyon/clicker hibrit mobil oyundur. Tek el, ASMR odaklı dokunmatik mekanikler üzerine kurulu tatmin edici üretim döngüsü; offline ilerleme, derinlikli upgrade ağacı ve 60+ ekmeğin yer aldığı dünya koleksiyonu ile 18-45 yaş kitlesine hitap eder. Oyuncunun aktif olduğu her 2-7 dakika anlamlıdır; geri döndüğünde fırın onu bekliyor olur.
+
+---
+
+## PLAYER FANTASY
+
+**Temel his:** "Sabahın erkeninde fırını ilk açan usta." — Hamur ellerin altında şekillenir, fırının ısısı neredeyse hissedilir, müşterinin yüzündeki memnuniyet görülür. Oyuncu kontrol sahibi, üretken ve büyüyen bir şeyin mimarı hisseder.
+
+**İkincil his:** Koleksiyon tatmini — dünyanın her köşesinden bir ekmeği öğrenmek, denemek, rafına yerleştirmek. Her yeni şehir bir keşif, her yeni tarif bir gurur.
+
+**Kaçınılması gereken:** Ezici bekleme, boş ekran, "neden tıklıyorum" hissi. Her tap bir şeyi ilerletmeli.
+
+---
+
 ## 1. OYUN MEKANİĞİ
 
 ### Temel Döngü (Core Loop)
