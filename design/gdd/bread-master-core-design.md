@@ -335,3 +335,84 @@ Her ekranda en az 2 "bir sonraki hedef" görünür:
 4. **Koleksiyon boşluğu** — Ansiklopedide boş siluet: "?"
 5. **Müşteri balonu** — "Seninle tanışmak istiyorum... daha iyi bir vitrine ihtiyacın var"
 6. **Günlük görev** — "Bugün 30 simit sat → 500 Rozet"
+
+---
+
+## 4. FORMÜLLER
+
+### Offline Üretim
+
+```
+items_produced = floor(min(offline_seconds, cap_seconds) / bake_time_seconds) * oven_capacity
+```
+
+| Değişken | Açıklama | Örnek |
+|----------|----------|-------|
+| `offline_seconds` | Geçen gerçek süre (sn) | 36.000 (10 saat) |
+| `cap_seconds` | Max offline süre (sn) | 28.800 (8 saat) |
+| `bake_time_seconds` | Bir tur pişirme süresi | 120 sn |
+| `oven_capacity` | Fırın kapasitesi (ekmek/tur) | 4 |
+
+**Örnek:** 10 saat offline, 4 kapasiteli fırın, 2 dk pişirme →
+`floor(min(36000, 28800) / 120) * 4 = floor(240) * 4 = 960 ekmek`
+
+---
+
+### Upgrade Maliyet Ölçekleme
+
+```
+cost(n) = base_cost * 3^(n-1)
+```
+
+| n (seviye) | base_cost = 50 | base_cost = 100 |
+|------------|----------------|-----------------|
+| 1 | 50 | 100 |
+| 2 | 150 | 300 |
+| 3 | 450 | 900 |
+| 4 | 1.350 | 2.700 |
+| 5 | 4.050 | 8.100 |
+
+---
+
+### Müşteri Memnuniyeti Azalması
+
+```
+satisfaction_loss = (elapsed_ms / patience_ms) * 100
+final_gold = base_gold * max(0.5, 1 - satisfaction_loss / 100)
+```
+
+- Tam zamanında teslim (satisfaction_loss = 0) → `base_gold * 1.0`
+- Yarı sürede teslim edilmemiş (satisfaction_loss = 50) → `base_gold * 0.75`
+- Süre dolmuş (satisfaction_loss = 100) → müşteri kaçar, altın yok
+
+---
+
+### Tarif Değeri Ölçekleme
+
+```
+recipe_value = base_value * (1 + quality_bonus) * location_multiplier
+```
+
+| Değişken | Kaynak | Örnek |
+|----------|--------|-------|
+| `base_value` | Tarif tablosundan | 85 altın (baguette) |
+| `quality_bonus` | Hamur Kalitesi upgrade toplamı | 0.30 (+30%) |
+| `location_multiplier` | Aktif lokasyon çarpanı | 1.5 (Paris) |
+
+---
+
+## 5. TUNING KNOBS
+
+Aşağıdaki değerler oynanabilirlik testlerine göre ayarlanabilir. Güvenli aralıkların dışına çıkmak oyun dengesini bozar.
+
+| Değer | Varsayılan | Güvenli Aralık | Etki |
+|-------|-----------|----------------|------|
+| `bake_time_base` | 120 sn | 60–300 sn | Çok düşük → oyuncu tıklamaya yetişemez; çok yüksek → bekleme can sıkar |
+| `offline_cap_hours` | 8 saat | 6–16 saat | Düşük → sık açmak zorunda kalır; yüksek → geri dönme motivasyonu azalır |
+| `offline_cap_late_game` | 12 saat | 10–20 saat | Geç oyun premium hissi için |
+| `patience_base_seconds` | 300 sn | 90–600 sn | Çok düşük → stres; çok yüksek → gerginlik yok |
+| `vip_spawn_rate` | %5 | %2–%15 | Yüksek → VIP özelliği anlamsızlaşır |
+| `upgrade_cost_exponent` | 3.0 | 2.5–4.0 | Düşük → erken maxlanır; yüksek → ilerlemek imkansız hissettirilebilir |
+| `location_multiplier_step` | +0.5 | +0.3–+0.8 | Her şehirde gelir artışı hissi |
+| `daily_task_reward_rozet` | 500 | 200–1.000 | Premium para dengesini etkiler |
+| `recipe_unlock_threshold` | Tarife özgü | ±%20 | Tarif açma hızı akışını belirler |
