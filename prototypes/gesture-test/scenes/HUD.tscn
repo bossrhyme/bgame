@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://hud_scene"]
+
+[node name="HUD" type="CanvasLayer"]
+
+[node name="CoinLabel" type="Label" parent="."]
+anchors_preset = 1
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 16.0
+offset_top = 24.0
+offset_right = 300.0
+offset_bottom = 56.0
+text = "Coins: 0"
+theme_override_font_sizes/font_size = 28

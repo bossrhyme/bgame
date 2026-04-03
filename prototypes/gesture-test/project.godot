@@ -1,0 +1,32 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; but the file format is documented below:
+; https://docs.godotengine.org/en/stable/tutorials/misc/resource_paths.html
+
+config_version=5
+
+[application]
+
+config/name="GestureTest"
+config/description="Prototype: circular drag gesture validation for Ekmek Ustası"
+run/main_scene="res://scenes/GestureTestMain.tscn"
+config/features=PackedStringArray("4.6", "Mobile")
+config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=390
+window/size/viewport_height=844
+window/handheld/orientation=1
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[physics]
+
+2d/physics_engine="Jolt2D"
+
+[rendering]
+
+renderer/rendering_method="mobile"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true

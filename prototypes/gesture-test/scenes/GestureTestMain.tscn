@@ -1,0 +1,90 @@
+[gd_scene load_steps=8 format=3 uid="uid://gesture_test_main"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="0"]
+[ext_resource type="Script" path="res://scripts/gesture_detector.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/coin_counter.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/DoughNode.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/BakeStation.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/HUD.tscn" id="5"]
+
+[node name="GestureTestMain" type="Node2D" script=ExtResource("0")]
+
+; --- Background ---
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.15, 0.12, 0.10, 1.0)
+z_index = -1
+
+; --- Debug Overlay (top-right) ---
+[node name="DebugPanel" type="VBoxContainer" parent="."]
+offset_left = 220.0
+offset_top = 24.0
+offset_right = 380.0
+offset_bottom = 160.0
+
+[node name="DebugTitle" type="Label" parent="DebugPanel"]
+text = "[ DEBUG ]"
+theme_override_font_sizes/font_size = 14
+modulate = Color(0.6, 0.6, 0.6, 1)
+
+[node name="CircleCountLabel" type="Label" parent="DebugPanel"]
+text = "Circles: 0 / 3"
+theme_override_font_sizes/font_size = 16
+
+[node name="FractionLabel" type="Label" parent="DebugPanel"]
+text = "Progress: 0%"
+theme_override_font_sizes/font_size = 16
+
+[node name="RadiusLabel" type="Label" parent="DebugPanel"]
+text = "Radius: 0px"
+theme_override_font_sizes/font_size = 14
+modulate = Color(0.6, 0.6, 0.6, 1)
+
+; --- Gesture Detector (attached to root, detects screen-wide) ---
+[node name="GestureDetector" type="Node" parent="." script=ExtResource("1")]
+
+; --- Dough Node (center of screen, slightly upper half) ---
+[node name="DoughNode" parent="." instance=ExtResource("3")]
+position = Vector2(195, 300)
+
+; --- Bake Station (lower half) ---
+[node name="BakeStation" parent="." instance=ExtResource("4")]
+position = Vector2(195, 580)
+
+; --- Coin Counter (manages particle burst + popup) ---
+[node name="CoinCounter" type="Node2D" parent="." script=ExtResource("2")]
+position = Vector2(195, 580)
+
+[node name="CoinParticles" type="GPUParticles2D" parent="CoinCounter"]
+amount = 24
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.9
+emitting = false
+process_material = SubResource("ParticleMaterial")
+
+[node name="PopupLabel" type="Label" parent="CoinCounter"]
+offset_left = -40.0
+offset_top = -30.0
+offset_right = 40.0
+offset_bottom = 0.0
+horizontal_alignment = 1
+text = "+10"
+theme_override_font_sizes/font_size = 28
+modulate = Color(1.0, 0.85, 0.0, 1.0)
+visible = false
+
+; --- HUD (coin display, top layer) ---
+[node name="HUD" parent="." instance=ExtResource("5")]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleMaterial"]
+direction = Vector3(0, -1, 0)
+spread = 45.0
+initial_velocity_min = 80.0
+initial_velocity_max = 160.0
+gravity = Vector3(0, 200, 0)
+scale_min = 4.0
+scale_max = 8.0
+color = Color(1.0, 0.85, 0.1, 1.0)
