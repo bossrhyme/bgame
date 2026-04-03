@@ -46,4 +46,6 @@
 ## Architecture Decisions Log
 
 <!-- Quick reference linking to full ADRs in docs/architecture/ -->
-- **2026-04-02** — Engine: Godot 4.6 seçildi (mobil 2D idle, GDScript, Jolt fizik)
+- **2026-04-02** — Engine: Godot 4.6 seçildi → `docs/architecture/adr-0001-engine-godot-4-6.md`
+- **2026-04-03** — Monetizasyon: Rewarded Ad (IAP yok) → `docs/architecture/adr-0002-monetization-rewarded-ads.md`
+- **2026-04-03** — Idle Loop: Timer bazlı (_process() yasak) → `docs/architecture/adr-0003-idle-loop-timer-based.md`
