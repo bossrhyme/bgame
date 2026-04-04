@@ -5,7 +5,7 @@
 **Updated:** 2026-04-03
 **Source Concept:** `design/gdd/bread-master-core-design.md`
 **Total Systems:** 29
-**Designed:** 0 / 29
+**Designed:** 1 / 29
 **Monetization:** Rewarded Ad (IAP yok — zaman yatırımı = kazanım modeli)
 
 ---
@@ -24,7 +24,7 @@ katmanları arasında temiz bir sırayla tasarlanabilir.
 
 | # | Sistem | Kategori | Öncelik | Durum | GDD | Bağımlılıklar |
 |---|--------|----------|---------|-------|-----|---------------|
-| 1 | Time Tracking System | Core | MVP | Not Started | — | — |
+| 1 | Time Tracking System | Core | MVP | Designed | [time-tracking-system.md](time-tracking-system.md) | — |
 | 2 | Content Database | Core | MVP | Not Started | — | — |
 | 3 | Settings & Preferences | Core | MVP | Not Started | — | — |
 | 4 | Economy System | Economy | MVP | Not Started | — | Time Tracking |
@@ -218,10 +218,10 @@ Delivery System, Seasonal Events System, Performance Monitoring
 
 | Tier | Toplam | Tasarlandı | Tamamlandı |
 |------|--------|-----------|-----------|
-| MVP | 15 | 0 | 0 |
+| MVP | 15 | 1 | 0 |
 | Vertical Slice | 11 | 0 | 0 |
 | Alpha | 3 | 0 | 0 |
-| **Toplam** | **29** | **0** | **0** |
+| **Toplam** | **29** | **1** | **0** |
 
 > **Not:** GDD yazımı `/design-system [sistem-adı]` komutuyla başlatılır.
 > Her sistem tasarlandığında bu tablodaki durum güncellenir.
