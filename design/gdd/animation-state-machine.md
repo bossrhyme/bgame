@@ -1,6 +1,6 @@
 # Animation State Machine
 
-> **Status**: Draft Complete
+> **Status**: Approved (with notes)
 > **Author**: User + Claude Code agents
 > **Last Updated**: 2026-04-04
 > **Implements Pillar**: ASMR & Tactile Feel — "Her tap bir şeyi ilerletmeli"
@@ -47,13 +47,15 @@ sertleşiyor) oyuncu ASMR hissini kaybeder ve oyun "mekanik" hisseder.
 3. **Olay-tetiklemeli.** Tüm animasyon geçişleri sinyal/metod çağrısıyla gelir;
    `_process()` içinde animasyon durumu sorgulanmaz veya değiştirilmez (ADR-0003 uyumu).
 4. **Crossfade geçiş.** `AnimationPlayer.play(name, blend_time)` parametresi ile iki
-   animasyon arasında crossfade uygulanır. Varsayılan blend süreleri Tuning Knobs
-   tablosunda tanımlanır.
+   animasyon arasında crossfade uygulanır. `BLEND_*` sabitleri `play()` çağrısında
+   `custom_blend` parametresiyle iletilir — editor'daki blend time ayarları değil,
+   çağrı-site sabitleri geçerlidir. Varsayılan blend süreleri Tuning Knobs tablosunda tanımlanır.
 5. **battery_saver kalite modu.** `AnimationManager`, `Settings`'ten `battery_saver`
    bayrağını startup'ta ve değişimde okur:
    - `false` (60 FPS): Blend süreleri aktif; `GPUParticles2D` düğümleri etkin.
-   - `true` (30 FPS): Tüm blend süreleri `0.0` (anlık kesme); `GPUParticles2D.emitting = false`.
-     `speed_scale` değişmez. Coin animasyonu tamamen atlanır — yalnızca sayaç güncellenir.
+   - `true` (30 FPS): Tüm blend süreleri `0.0` (anlık kesme); `GPUParticles2D.process_mode = PROCESS_MODE_DISABLED`
+     (anlık durdurma — `emitting = false`'un aksine particle tail olmaz). `speed_scale` değişmez.
+     Coin animasyonu tamamen atlanır — yalnızca sayaç güncellenir.
 6. **Animasyon isimlendirme.** `"nesne_durum"` snake_case formatı: `"dough_kneading"`,
    `"oven_door_opening"`, `"coin_fly"`.
 7. **Tamamlanma sinyali.** Animasyon bitişini gereken yerde `animation_finished`
@@ -70,17 +72,21 @@ sertleşiyor) oyuncu ASMR hissini kaybeder ve oyun "mekanik" hisseder.
 
 | Durum | Animasyon | Süre | Giriş | Çıkış |
 |-------|-----------|------|-------|-------|
-| `IDLE` | `dough_idle` — hafif nefes bob | Döngü | Başlangıç / hasat sonrası | Gesture başladı |
-| `KNEADING` | `dough_kneading` — genişle/daral döngüsü | Döngü (≥ 3×) | Döngüsel gesture aktif | 3. döngü tamamlandı |
-| `READY` | `dough_ready` — yavaş şişme + titreme | 8–12 sn | 3 gesture döngüsü bitti | Fırına sürüklendi |
-| `SHAPING` | `dough_shaping` — forma geçiş | Gesture süresi | Long-press + drag aktif | Bırakıldı |
-| `OVEN_LOADING` | `dough_slide_in` — arc hareketi fırına | 0.5 sn | Fırın DropZone'a bırakıldı | `animation_finished` → nesne deactivate |
+| `IDLE` | `dough_idle` — hafif nefes bob | Döngü | Başlangıç / hasat sonrası | Gesture başladı → `KNEADING` |
+| `KNEADING` | `dough_kneading` — genişle/daral döngüsü | Döngü (≥ 3×) | `IDLE`'dan gesture başladı | 3. döngü tamamlandı → `READY`; gesture kesilirse → `IDLE` |
+| `READY` | `dough_ready` — yavaş şişme + titreme | 8–12 sn | `KNEADING`'den 3. döngü bitti | Long-press + drag → `SHAPING`; yeni gesture başlarsa → `KNEADING` |
+| `SHAPING` | `dough_shaping` — forma geçiş | Gesture süresi | `READY` iken long-press + drag | DropZone içine bırakıldı → `OVEN_LOADING`; DropZone dışına bırakıldı → `dough_return` → `READY` |
+| `OVEN_LOADING` | `dough_slide_in` — arc hareketi fırına | 0.5 sn | `SHAPING`'den DropZone içine bırakıldı | `dough_loaded` sinyali emit edilir → Oven/Baking sistemi dinler; nesne deactivate |
+
+> **Gesture sayaç sahibi:** Dough node kendi `_loop_count` değişkenini tutar. Her
+> `gesture_loop_completed` sinyalinde +1 artar. `KNEADING`'e yeniden girildiğinde
+> (READY → KNEADING) sıfırlanır.
 
 **Hamur drag-to-oven detayı:**
-- Oyuncu READY hamuru sürüklemeye başlayınca hamur parmağı Tween ile takip eder
-  (animasyon değil — pozisyon interpolasyonu)
+- Oyuncu READY hamuruna long-press + drag başlatınca `SHAPING` state'e geçilir;
+  hamur parmağı Tween ile takip eder (animasyon değil — pozisyon interpolasyonu)
 - Bırakma noktası fırın `DropZone` içindeyse: `OVEN_LOADING` tetiklenir; `dough_slide_in`
-  hamuru fırın kapısına arc yayı çizerek taşır
+  hamuru fırın kapısına arc yayı çizerek taşır; animasyon bitince `dough_loaded` sinyali emit edilir
 - Bırakma noktası `DropZone` dışındaysa: `dough_return` animasyonu (0.3 sn) orijinal
   konuma döner; `READY` durumu korunur
 - `OVEN_LOADING` sırasında yeni gesture kabul edilmez (input blok)
@@ -93,12 +99,17 @@ sertleşiyor) oyuncu ASMR hissini kaybeder ve oyun "mekanik" hisseder.
 CLOSED
   → [bake_started] → OPENING (1 sn, kapı gıcırtısı)
   → OPEN (dough_slide_in oynuyor)
-  → [dough_slide_in bitti] → CLOSING (1 sn) → CLOSED
+  → [Dough node'un AnimationPlayer'ından animation_finished("dough_slide_in")]
+  → CLOSING (1 sn) → CLOSED
 
   → [bake_completed] → OPENING (1 sn)
   → OPEN (bread_slide_out oynuyor)
-  → [bread_slide_out bitti] → CLOSING (1 sn) → CLOSED
+  → [Bread node'un AnimationPlayer'ından animation_finished("bread_slide_out")]
+  → CLOSING (1 sn) → CLOSED
 ```
+
+> **Sinyal kaynağı:** Fırın kapısı Dough ve Bread node'larının `AnimationPlayer.animation_finished`
+> sinyallerini dinler. AnimationManager bu bağlantıyı ilgili node sahnede aktifken kurar.
 
 OPENING sırasında yeni açma isteği gelirse yoksayılır; mevcut geçiş tamamlanır.
 
@@ -146,6 +157,9 @@ OPENING sırasında yeni açma isteği gelirse yoksayılır; mevcut geçiş tama
 
 battery_saver modunda coin animasyonu tamamen atlanır (Rule 5).
 
+> **Uygulama notu (coin fan gecikme):** Sıralı spawn gecikmeleri `get_tree().create_timer(delay).timeout`
+> ile uygulanır (`SceneTreeTimer`). `_process()` içinde sayaç tutmak ADR-0003 ihlalidir — yasaktır.
+
 ---
 
 #### 5. Müşteri (`AnimationPlayer`) — *Provisional: Customer/Order GDD yazılmadan önce*
@@ -158,11 +172,11 @@ battery_saver modunda coin animasyonu tamamen atlanır (Rule 5).
 | `HAPPY` | `customer_happy` — zıplama, yıldız | 0.6 sn | Zamanında teslim | `LEAVING` |
 | `DISAPPOINTED` | `customer_disappointed` — omuz düşürme | 0.4 sn | Geç teslim | `LEAVING` |
 | `LEAVING` | `customer_leave` — slide-out | 0.5 sn | HAPPY / DISAPPOINTED bitti | `queue_free` |
-| `TIMEOUT` | `customer_leave` (hızlı) | 0.25 sn | Sabır tamamen doldu | `queue_free` + memnuniyet -10 |
+| `TIMEOUT` | `customer_leave_fast` — hızlı slide-out | 0.25 sn | Sabır tamamen doldu | `queue_free` + memnuniyet -10 |
 
 - WAITING → IMPATIENT blend: 0.3 sn
 - IMPATIENT → HAPPY/DISAPPOINTED: anlık kesme (tatmin hissi)
-- TIMEOUT, normal LEAVING'ten 2× hızlı çalışır
+- TIMEOUT ayrı bir `customer_leave_fast` asset'i kullanır (speed_scale değişmez — Core Rule 5 uyumu)
 
 ---
 
@@ -213,13 +227,13 @@ spawn_delay(i) = i × COIN_FAN_INTERVAL_SEC   # varsayılan: 0.1 sn
 
 | # | Durum | Beklenen Davranış |
 |---|-------|-------------------|
-| 1 | `battery_saver` uygulama çalışırken değiştirilirse | `AnimationManager` sinyali anında alır; blend=0.0, `GPUParticles2D.emitting=false` — mevcut animasyon kesilmez, sonraki geçişten itibaren etkin |
+| 1 | `battery_saver` uygulama çalışırken değiştirilirse | `AnimationManager` sinyali anında alır; blend=0.0, `GPUParticles2D.process_mode = PROCESS_MODE_DISABLED` — mevcut animasyon kesilmez, sonraki geçişten itibaren etkin |
 | 2 | Aynı nesne üzerinde animasyon oynarken `play()` tekrar çağrılırsa | Blend süresi ≥ 0.1 sn ile crossfade; TIMEOUT/ABSORBED istisnalarında anlık kesme |
 | 3 | Hamur `OVEN_LOADING` sırasında uygulama kapanırsa | Animasyon yeniden başlatılmaz; açılışta hamur sahnesi görünmez — Oven/Baking sistemi kendi state'ini restore eder |
-| 4 | Çok hızlı ardışık `gold_changed` sinyalleri | Her sinyal bağımsız coin seti spawn eder; çakışan coin grupları kabul edilen davranış; maximum 8 coin × sinyal sayısı draw call eklenir |
-| 5 | `dough_ready` tamamlanmadan yeni gesture gelirse | KNEADING'e geri dönülür; `READY` olmayan hamur fırına sürüklenemez (input guard aktif) |
+| 4 | Çok hızlı ardışık `gold_changed` sinyalleri | Aynı anda max 3 coin grubu (24 coin) aktif olabilir; fazlası kuyruğa alınır (Queue); draw call spike'ı önlenir |
+| 5 | `dough_ready` tamamlanmadan yeni gesture gelirse | KNEADING'e geri dönülür; `_loop_count` sıfırlanır; `READY` olmayan hamur fırına sürüklenemez (input guard aktif) |
 | 6 | Müşteri ENTERING sırasında sipariş iptal edilirse | ENTERING → LEAVING blend geçişi (0.3 sn); müşteri tam yerleşmeden ayrılır |
-| 7 | Vitrin doluyken hasat tap | `bread_slide_out` oynanmaz; ekmek `BAKED` kalır; HUD "Vitrin dolu!" uyarısı tetiklenir |
+| 7 | Vitrin doluyken hasat tap | `bread_slide_out` oynanmaz; ekmek `BAKED` kalır; ASM `harvest_blocked` sinyali emit eder → HUD "Vitrin dolu!" uyarısı gösterir |
 | 8 | 4 müşteri aynı anda IMPATIENT | Her biri bağımsız `AnimationPlayer`; paralel döngüler; draw call bütçesi (≤ 100) aşılmamalı |
 | 9 | `AnimationPlayer` referansı null (eksik bileşen) | `push_error` ile log; animasyon atlanır; gameplay devam eder |
 | 10 | `dough_return` oynarken yeni gesture | Yoksayılır; `dough_return` tamamlanana kadar input blok |
@@ -240,9 +254,10 @@ spawn_delay(i) = i × COIN_FAN_INTERVAL_SEC   # varsayılan: 0.1 sn
 
 | # | Sistem | Bağımlılık Tipi | Interface | Notlar |
 |---|--------|-----------------|-----------|--------|
-| 6 | **VFX/Particle System** | Soft | `GPUParticles2D.emitting: bool` doğrudan ayarlanır; referans sahne yüklendiğinde inject edilir | GDD yazılmadan önce — provisional |
+| 6 | **VFX/Particle System** | Soft | `GPUParticles2D.process_mode` ve `emitting` property'leri; referans sahne yüklendiğinde `@export` ile inject edilir | GDD yazılmadan önce — provisional |
 | 7 | **Sound & Animation System** | Soft | `AnimationPlayer` track event callback'leri; ses tetikleme ASM'nin sorumluluğu değil | GDD yazılmadan önce — provisional |
-| 8 | **UI/HUD System** | Soft | `AnimationManager.coin_absorbed` sinyali — sayaç güncelleme animasyonunu HUD kendi tetikler | HUD GDD yazılmadan önce — provisional |
+| 8 | **UI/HUD System** | Soft | `AnimationManager.coin_absorbed` — sayaç animasyonu; `AnimationManager.harvest_blocked` — vitrin dolu uyarısı | HUD GDD yazılmadan önce — provisional |
+| 9 | **Oven/Baking System** | Soft (downstream) | `AnimationManager.dough_loaded` sinyali — hamur fırına yüklendiğinde emit edilir; Oven/Baking sistemi dinler | Oven/Baking GDD yazılınca kesinleşir |
 
 **Hard:** ASM bu sistem olmadan başlatılamaz veya temel işlev göremez.
 **Soft:** ASM bu sistem olmadan çalışmaya devam eder; ilgili özellik devre dışı kalır veya atlanır.
@@ -295,7 +310,8 @@ Her state için animasyon artist tarafından üretilmesi gereken varlıklar:
 | `customer_impatient` | Sprite sheet | Evet | Hızlı ayak sallama |
 | `customer_happy` | Sprite sheet | Hayır | 0.6 sn; yıldız efekti ayrı particle |
 | `customer_disappointed` | Sprite sheet | Hayır | 0.4 sn |
-| `customer_leave` | Sprite sheet | Hayır | 0.5 sn slide-out |
+| `customer_leave` | Sprite sheet | Hayır | 0.5 sn slide-out (normal ayrılış) |
+| `customer_leave_fast` | Sprite sheet | Hayır | 0.25 sn slide-out (TIMEOUT — speed_scale kullanılmaz; ayrı asset) |
 
 ### Ses Eşleştirme
 
@@ -313,7 +329,7 @@ Ses tetikleme `AnimationPlayer` `call_method` track event'leriyle Sound & Animat
 
 ## UI Requirements
 
-- **HUD "Vitrin dolu!" uyarısı:** Ekmek `BAKED` state'te kalırken hasat tap gelirse HUD uyarı tetiklenir. Format ve süre UI/HUD GDD yazılınca kesinleşir (OQ-03).
+- **HUD "Vitrin dolu!" uyarısı:** Ekmek `BAKED` state'te kalırken hasat tap gelirse ASM `harvest_blocked` sinyali emit eder; HUD bu sinyali dinler ve uyarıyı gösterir. Format ve süre UI/HUD GDD yazılınca kesinleşir (OQ-03).
 - **Coin sayaç animasyonu:** `coin_absorbed` sinyalinde HUD sayaç kendi güncelleme animasyonunu tetikler. Animasyon ASM'nin sorumluluğu değil.
 - **Sabır göstergesi:** Müşteri `IMPATIENT` state'ine geçtiğinde UI sabır çubuğu görsel değişim gösterir. Bağlantı Customer/Order GDD ile kesinleşir.
 
@@ -340,6 +356,6 @@ Ses tetikleme `AnimationPlayer` `call_method` track event'leriyle Sound & Animat
 
 | # | Soru | Sahip | Hedef |
 |---|------|-------|-------|
-| OQ-01 | AC-10 için coin fan gecikme testi gerçek zamana mı bağlanacak yoksa `timer_factory` enjeksiyonuyla mı mock'lanacak? Injection mimarisi Lead Programmer onayı gerektiriyor. | Lead Programmer | Customer/Order GDD'den önce |
+| ~~OQ-01~~ | ~~Coin fan gecikme testi timer_factory enjeksiyonu mu?~~ **KAPANDI** — Coin fan `SceneTreeTimer` kullanır. Test için dependency injection Lead Programmer onayına sunulacak. | Lead Programmer | Kapatıldı 2026-04-04 |
 | OQ-02 | Müşteri animasyon sinyallerinin kesin imzaları: `customer_served(timing: String)` mi yoksa enum mi? Customer/Order GDD yazılınca bu bölüm provisional'dan çıkar. | Game Designer | Customer/Order GDD sırasında |
 | OQ-03 | Vitrin dolu durumunda HUD "Vitrin dolu!" uyarısı hangi format ve süreyle gösterilir? (toast mu, inline uyarı mı?) | UX Designer | UI/HUD GDD sırasında |
