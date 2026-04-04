@@ -377,6 +377,11 @@ items_produced = floor(min(offline_seconds, cap_seconds) / bake_time_seconds) * 
 **Örnek:** 10 saat offline, 4 kapasiteli fırın, 2 dk pişirme →
 `floor(min(36000, 28800) / 120) * 4 = floor(240) * 4 = 960 ekmek`
 
+> **Cap büyüme kuralı:** `cap_seconds` sabit değil; oyun ilerledikçe artar.
+> Erken oyun (Sev. 1–15): 28.800 sn (8 saat). Geç oyun (Sev. 40+): 43.200 sn (12 saat).
+> Büyüme mekanizması (lokasyon açma veya özel upgrade) Offline Production GDD'sinde tanımlanacak.
+> `offline_cap_late_game` tuning knob'u bu değeri kontrol eder (→ Bölüm 5).
+
 ---
 
 ### Upgrade Maliyet Ölçekleme
@@ -401,6 +406,13 @@ cost(n) = base_cost * 3^(n-1)
 satisfaction_loss = (elapsed_ms / patience_ms) * 100
 final_gold = base_gold * max(0.5, 1 - satisfaction_loss / 100)
 ```
+
+| Değişken | Açıklama | Aralık |
+|----------|----------|--------|
+| `elapsed_ms` | Müşteri sahneye girip sipariş verdiği andan geçen süre (ms) — sipariş **verildiği** an sıfırlanır | [0, patience_ms] |
+| `patience_ms` | `CustomerTypeData.patience_seconds × 1000` | [90000, 600000] |
+| `satisfaction_loss` | Yüzde memnuniyet kaybı | [0.0, 100.0] |
+| `final_gold` | Teslim edilen altın miktarı; min %50 oranı korunur | [base_gold × 0.5, base_gold] |
 
 - Tam zamanında teslim (satisfaction_loss = 0) → `base_gold * 1.0`
 - Yarı sürede teslim edilmemiş (satisfaction_loss = 50) → `base_gold * 0.75`

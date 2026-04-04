@@ -184,12 +184,12 @@ Diğer ayar grupları (bildirimler, performans, dil, veri) boolean/enum değerle
 
 ## Acceptance Criteria
 
-- [ ] Müzik slider 0–100 arası ayarlandığında AudioServer Müzik bus'ı doğru dB değerine geçer
+- [ ] Müzik slider 0–100 arası ayarlandığında AudioServer Müzik bus'ı doğru dB değerine geçer: `slider=100 → 0.0 dB`, `slider=80 → −1.9 dB (±0.1 dB)`, `slider=50 → −6.0 dB (±0.1 dB)`, `slider=0 → −80.0 dB` — `AudioServer.get_bus_volume_db()` ile doğrula
 - [ ] SFX ve Ambient slider'ları bağımsız çalışır; birini değiştirmek diğerini etkilemez
 - [ ] `master_mute` açıkken slider'lar görsel disabled; kapatılınca önceki değerler geri gelir
 - [ ] `settings.cfg` her slider değişikliğinde kaydedilir; oyun kapatılıp açıldığında değerler korunur
 - [ ] OS bildirim izni yoksa bildirim toggle'ları disabled + açıklama mesajı görünür
-- [ ] `battery_saver=true` iken `Engine.max_fps == 30`, `false` iken `== 60`
+- [ ] `battery_saver=true` iken `Engine.max_fps == 30`, `false` iken `== 60` — `Engine.max_fps` property'si assertion ile doğrula (Godot Profiler'ı açmak gerekmez)
 - [ ] Dil Türkçe → İngilizce değiştirildiğinde tüm UI string'leri sahne yeniden yüklenmeden güncellenir
 - [ ] Kayıt Sil → dialog açılır → [Sil] → `user://` temizlenir → ana menüye yönlendirilir
 - [ ] Kayıt Sil → dialog açılır → [İptal] → hiçbir şey değişmez

@@ -8,7 +8,7 @@
 - **Engine**: Godot 4.6
 - **Language**: GDScript (primary), C++ via GDExtension (performance-critical systems only)
 - **Rendering**: Mobile Renderer (iOS/Android target), Forward+ for editor/desktop preview
-- **Physics**: Jolt (Godot 4.6 default)
+- **Physics**: GodotPhysics2D (2D varsayılan — bu proje 2D'dir; Jolt 3D fizik motorudur, kullanılmıyor)
 
 ## Naming Conventions
 

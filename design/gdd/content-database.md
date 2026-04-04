@@ -99,6 +99,11 @@ tüm oyun dengesini tek bir yerde görmek ve değiştirmek.
 @export var spawn_weight: float               # göreceli olasılık; normalize edilir
 ```
 
+> **Level indexing kuralı:**
+> - `effect_per_level` array'i **0-indexed**: `effect_per_level[0]` = seviye 1 etkisi, `effect_per_level[2]` = seviye 3 etkisi.
+> - Maliyet formülü **1-indexed** `level` parametresi kullanır: `cost(level=3) = base_cost × 3^2 = 450`.
+> - Upgrade kodu: `effect_per_level[current_level - 1]` ile seviyeye karşılık gelen etkiyi alır.
+
 ### States and Transitions
 
 | Durum | Açıklama | Tetikleyici |
@@ -230,7 +235,7 @@ N/A — no direct UI; data surfaces through Recipe System and Upgrade Tree UI.
 | # | Kriter | Test Yöntemi |
 |---|--------|-------------|
 | AC-1 | `ContentRegistry._ready()` sonrası tüm kayıt tipleri sorgulabilir | Integration test |
-| AC-2 | `get_recipe("white_bread")` → doğru `RecipeData` döner (base_value, bake_time kontrol) | Unit test |
+| AC-2 | `get_recipe("white_bread")` → `RecipeData` döner; `base_value == 10`, `bake_time_seconds == 60.0`, `category == RecipeCategory.BASIC` | Unit test |
 | AC-3 | `get_recipe("invalid_id")` → `null` döner, çökme yok, `push_error()` logu var | Unit test (EC-1) |
 | AC-4 | Aynı `id`'li iki `.tres` varsa `push_warning()` logu var, son yüklenen geçerli | Unit test (EC-2) |
 | AC-5 | `effect_per_level = []` olan `UpgradeData` → `get_upgrade()` `null` döner, hata logu var | Unit test (EC-3) |

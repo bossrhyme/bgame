@@ -102,6 +102,12 @@ elapsed_seconds = clamp(now_unix - last_seen_unix, 0.0, ANTI_CHEAT_CAP_SECONDS)
 | `ANTI_CHEAT_CAP_SECONDS` | `int` | Sabit: 86400 (24 saat) — ayarlanamaz | 86400 |
 | **`elapsed_seconds`** | `float` | Çıktı | **[0.0, 86400.0]** |
 
+> **İki ayrı cap mekanizması:**
+> - `ANTI_CHEAT_CAP_SECONDS` = 86400 (24 saat) — yalnızca saat manipülasyonunu engeller; oyuncu hiçbir zaman bu sınıra ulaşmamalıdır.
+> - `offline_cap_seconds` = 28.800 (8 saat, erken oyun) — gerçek üretim sınırı; Offline Production GDD'si sahipliğinde. `elapsed_seconds` bu ikinci cap'i bilmez; downstream sistemler kendi cap'lerini uygular.
+>
+> Örnek: Oyuncu 30 saat offline kalırsa → `elapsed_seconds = 86400` (ANTI_CHEAT_CAP). Offline Production sistemi bunu `min(86400, 28800) = 28800` ile 8 saate indirir.
+
 ### F-2: Elapsed Days (Employee maaşı için)
 
 ```
@@ -187,7 +193,7 @@ hiçbir oyun sistemine bağımlı değildir.
 | AC-6 | Cihaz saati 10 saat geri sarılıp açılınca `elapsed_seconds = 0.0`, hata yok | Manual / unit test |
 | AC-7 | Cihaz saati 5 gün ileri sarılıp açılınca `elapsed_seconds = 86400.0` | Manual / unit test |
 | AC-8 | `NOTIFICATION_WM_GO_BACK_REQUEST` tetiklenince `last_seen_unix` kaydedilir | Log doğrulama |
-| AC-9 | `last_seen_unix` kaydı silinmiş / yoksa `elapsed_seconds = 0.0`, çökme yok | Unit test (EC-1) |
+| AC-9 | `last_seen_unix` kaydı yoksa (`ConfigFile.has_section_key()` → false) `elapsed_seconds = 0.0`, çökme yok; `null` veya `0` dönmez | Unit test (EC-1) |
 | AC-10 | `TimeManager` kaynak dosyasında downstream sistem adı import/referansı bulunmaz | Kod incelemesi |
 | AC-11 | EC-1 – EC-10 arası tüm edge case'ler mock timestamp'le GUT test koşumundan geçer | GUT test suite |
 
