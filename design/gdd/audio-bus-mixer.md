@@ -7,9 +7,10 @@
 
 ## Overview
 
-Audio Bus/Mixer, Ekmek Ustası'nın tüm ses çıkışını üç bağımsız kanal üzerinden yöneten
-altyapı sistemidir: **Müzik** (arka plan caz/akustik döngüsü), **SFX** (gameplay eylemleri —
-hamur, fırın, hasat, para), **Ambient** (fırın hışırtısı + uzak kasaba sesi). Sistem,
+Audio Bus/Mixer, Ekmek Ustası'nın tüm ses çıkışını dört bus üzerinden yöneten altyapı
+sistemidir: **Master** (genel çıkış), **Müzik** (arka plan caz/akustik döngüsü), **SFX**
+(gameplay eylemleri — hamur, fırın, hasat, para), **Ambient** (fırın hışırtısı + kasaba
+sesi). Sistem,
 `Settings`'ten gelen slider değerlerini Godot `AudioServer` bus'larına uygular; `master_mute`
 bayrağıyla tüm çıkışı anlık susturur. `Sound & Animation System`'ın ses oynatma çağrılarına
 hazır bir yönlendirme altyapısı sağlar.
@@ -47,15 +48,33 @@ kasanın tıkırtısı... her şey yerinde."* ASMR deneyiminin temeli ses katman
 6. **`battery_saver` modu.** `Ambient` bus `-80.0 dB`'e çekilir (sessizleşir). `Music` ve
    `SFX` çalışmaya devam eder. `Settings`'ten `battery_saver_changed(bool)` sinyaliyle tetiklenir.
 7. **Ses çalma API.**
-   - `AudioManager.play_sfx(stream: AudioStream, bus: String = "SFX")` — tek kullanımlık
-     `AudioStreamPlayer` node oluşturur, belirtilen bus'a route eder, `finished` sinyalinde `queue_free`.
+   - `AudioManager.play_sfx(stream: AudioStream, bus: String = "SFX", priority: int = SFX_PRIORITY_MEDIUM)` —
+     tek kullanımlık `AudioStreamPlayer` node oluşturur; `pitch_scale` ±`SFX_PITCH_RANGE`
+     rastgele ayarlanır; belirtilen bus'a route edilir; `finished` sinyalinde `queue_free`.
    - `AudioManager.play_music(stream: AudioStream)` — `Music` bus'ta döngüsel çalar. Aktif
      müzik varsa `MUSIC_CROSSFADE_SEC` süresinde crossfade.
    - `AudioManager.play_ambient(stream: AudioStream, layer_id: int)` — max 3 eşzamanlı
-     ambient katman; `layer_id` (0–2) ile bağımsız kontrol.
+     ambient katman; `layer_id` (0–2) ile bağımsız kontrol:
+     - Layer 0: Fırın ısısı (her zaman aktif; lokasyona göre değişmez)
+     - Layer 1: Dış ortam (kasaba, şehir, Paris sokağı — lokasyona göre değişir; OQ-02)
+     - Layer 2: Özel olay ambient'i (VIP müşteri, yoğun servis, festif dönem — opsiyonel)
    - `AudioManager.stop_ambient(layer_id: int)` — belirli ambient katmanı durdurur.
 8. **ADR-0003 uyumu.** `_process()` içinde ses durumu sorgulanmaz veya değiştirilmez;
    tüm güncellemeler sinyal-tetiklemeli.
+9. **SFX varyant stratejisi.** Tekrarlayan aksiyonlar (hamur yoğurma, coin) için tek dosya
+   yerine `AudioStreamRandomizer` resource kullanılır. Her tekrarlayan SFX için min.
+   `SFX_VARIANT_MIN` adet varyant asset üretilir. Godot 4.x `AudioStreamRandomizer`, her
+   çalışta listeden rastgele bir stream seçer — "machine gun effect" önlenir.
+   `play_sfx(stream, bus)` API değişmez; randomizer stream'in kendisi bir `AudioStream`'dir.
+10. **Pitch variation.** `play_sfx` çağrısında `AudioStreamPlayer.pitch_scale` rastgele
+    `[1.0 - SFX_PITCH_RANGE, 1.0 + SFX_PITCH_RANGE]` aralığında ayarlanır. Aynı sesi her
+    defasında biraz farklı duyurur; ASMR tekrar yorgunluğunu azaltır.
+11. **SFX öncelik sistemi.** `SFX_POLYPHONY_LIMIT` dolunca kesilecek node, öncelik tieriyle
+    belirlenir:
+    - **HIGH:** Hasat tok, para ding, upgrade unlock, tarif açma — asla kesilmez
+    - **MEDIUM:** Müşteri sesleri, kapı gıcırtısı — yalnızca HIGH için yer açılır
+    - **LOW:** Tekrarlayan hamur yoğurma, coin shower tekrarları — ilk kesilecek
+    `play_sfx(stream, bus, priority: int = SFX_PRIORITY_MEDIUM)` API'ye üçüncü parametre eklenir.
 
 ---
 
@@ -126,7 +145,7 @@ volume = lerp(current_db, -80.0, t / AMBIENT_RELEASE_SEC)
 | 5 | Uygulama arka plana alınırsa | `ApplicationPaused` sinyalinde `Master` bus `-80.0 dB`; öne gelince eski değer restore edilir |
 | 6 | `AudioStream` null geçilirse | `push_error` ile log; ilgili `play_*` çağrısı yoksayılır |
 | 7 | Tüm slider'lar 0 + `master_mute = false` | Tüm bus'lar `-80.0 dB` — sessizlik. Geçerli durum; `master_mute` bayrağına gerek yok |
-| 8 | `play_sfx` çok hızlı ardışık çağrılırsa | Her çağrı bağımsız `AudioStreamPlayer` oluşturur; eşzamanlı max `SFX_POLYPHONY_LIMIT` node; limit aşılınca en eski durdurulur |
+| 8 | `play_sfx` çok hızlı ardışık çağrılırsa | Öncelik sırasına göre: LOW öncelikli node'lar önce kesilir; HIGH öncelikli node'lar limit dışında tutulur (her zaman çalar) |
 
 ## Dependencies
 
@@ -157,6 +176,11 @@ volume = lerp(current_db, -80.0, t / AMBIENT_RELEASE_SEC)
 | `SFX_POLYPHONY_LIMIT` | `8` | 4 – 16 | Hızlı ardışık tap'lerde SFX'ler birbirini keser; ASMR tatmini bozulur | Eşzamanlı çok fazla `AudioStreamPlayer`; mobil bellek/CPU baskısı | Lead Programmer |
 | `AMBIENT_LAYER_COUNT` | `3` | Sabit | — | Arttırmak için kod değişikliği gerekir | Audio Director |
 | `DEFAULT_MUSIC_BPM` | `70` | 60 – 90 (referans) | Müzik durağan; ASMR için alt sınır | Tempo arttıkça casual/idle atmosfer bozulur; gerginlik hissi | Sound Designer (kod sabiti değil; üretim referansı) |
+| `SFX_VARIANT_MIN` | `3` | 2 – 5 | 2 varyant tekrar edilir; az da olsa machine gun effect duyulabilir | 5+ varyant asset üretim maliyeti artar; azalan geri dönüş | Audio Director / Sound Designer |
+| `SFX_PITCH_RANGE` | `0.05` | 0.02 – 0.10 | Pitch variation duyulmaz; etkisiz | Ses karakteri bozulur; aynı SFX farklı bir ses gibi algılanır | Audio Director |
+| `SFX_PRIORITY_HIGH` | `2` | Sabit | — | High priority SFX her zaman çalar; polyphony dışı | Lead Programmer |
+| `SFX_PRIORITY_MEDIUM` | `1` | Sabit | — | Varsayılan öncelik | Lead Programmer |
+| `SFX_PRIORITY_LOW` | `0` | Sabit | — | Polyphony dolunca ilk kesilir | Lead Programmer |
 
 ## Visual/Audio Requirements
 
@@ -177,15 +201,23 @@ Bu sistem görsel çıktı üretmez. Aşağıdaki gereksinimler yalnızca ses va
 
 ### SFX
 
-| Asset | Eylem | Notlar |
-|-------|-------|--------|
-| `sfx_dough_knead.ogg` | Hamur yoğurma "mlap mlap" | Yumuşak, organik |
-| `sfx_oven_door_creak.ogg` | Fırın kapısı gıcırtısı | Kısa < 0.5 sn; metalik |
-| `sfx_bread_thud.ogg` | Ekmek hasat — tok vuruş | Somut, kütlesel; ASMR kalitesi |
-| `sfx_coin_ding.ogg` | Para kazanma | Hafif, neşeli; yüksek pitch |
-| `sfx_register_click.ogg` | Kasa/vitrin satış | Mekanik, kuru |
-| `sfx_customer_mmm.ogg` | Müşteri memnuniyeti | Kısa vokal; sıcak |
-| `sfx_bread_harvest_puf.ogg` | Hasat "puf" | Hava kaçması; yumuşak |
+Tekrarlayan SFX'ler `AudioStreamRandomizer` resource olarak paketlenir; her biri min.
+`SFX_VARIANT_MIN` (varsayılan: 3) varyant içerir. Varyant sayısı asset adının sonunda belirtilir.
+
+| Asset (Randomizer) | Varyant | Öncelik | Eylem | Notlar |
+|--------------------|---------|---------|-------|--------|
+| `sfx_dough_knead.tres` | 3 | LOW | Hamur yoğurma "mlap mlap" | Yumuşak, organik; pitch ±5% |
+| `sfx_dough_shape.tres` | 2 | MEDIUM | Şekil verme "fış" | Sessiz hava kaçışı; narin |
+| `sfx_oven_door_creak.tres` | 2 | MEDIUM | Fırın kapısı — ağır metalik ses | Kısa < 0.5 sn; "krank" karakteri |
+| `sfx_bread_thud.tres` | 3 | HIGH | Ekmek hasat — tok vuruş | Somut, kütlesel; ASMR zirve anı |
+| `sfx_bread_harvest_puf.tres` | 2 | HIGH | Hasat "puf" | Hava kaçması; yumuşak |
+| `sfx_coin_ding.tres` | 3 | HIGH | Para kazanma | Hafif, neşeli; yüksek pitch |
+| `sfx_register_click.tres` | 2 | HIGH | Kasa/vitrin satış | Mekanik, kuru |
+| `sfx_customer_mmm.tres` | 3 | MEDIUM | Müşteri memnuniyeti | Kısa vokal; sıcak |
+| `sfx_customer_leave.tres` | 2 | MEDIUM | Müşteri kaçışı / hayal kırıklığı | Hafif, nazik negatif geri bildirim; sert değil |
+| `sfx_upgrade_unlock.tres` | 2 | HIGH | Upgrade satın alma | Tatmin edici "tık + parıltı"; motivasyon anı |
+| `sfx_recipe_unlock.tres` | 2 | HIGH | Yeni tarif açma | Meraklı, büyülü his; duygusal zirve |
+| `sfx_offline_return.tres` | 1 | HIGH | Offline dönüş — üretim patlaması | Tek varyant; dramatik, coşkulu |
 
 ### Teknik Gereksinimler
 
@@ -195,7 +227,8 @@ Bu sistem görsel çıktı üretmez. Aşağıdaki gereksinimler yalnızca ses va
 | Sample Rate | 44.1 kHz / 16-bit |
 | SFX Loudness | −14 LUFS |
 | Müzik / Ambient Loudness | −18 LUFS |
-| True Peak | −1.0 dBTP max |
+| True Peak | −2.0 dBTP max (mobil codec zinciri inter-sample peak oluşturabilir) |
+| Pitch Variation | `pitch_scale = randf_range(1.0 - SFX_PITCH_RANGE, 1.0 + SFX_PITCH_RANGE)` her `play_sfx` çağrısında uygulanır |
 
 ## UI Requirements
 
@@ -216,6 +249,8 @@ Settings & Preferences ekranına aittir. Bu sistem yalnızca o ekranın üretti�
 | AC-08 | Hızlı ardışık `play_sfx()` `SFX_POLYPHONY_LIMIT`'i aşmaz; limit aşılınca en eski node durdurulur | GUT: `LIMIT + 2` kez çağır; `get_child_count() <= LIMIT` + en eski `playing == false` assert et |
 | AC-09 | Uygulama arka plana alınca `Master` `-80.0 dB`; öne gelince önceki değer restore edilir | Manuel: home tuşu → Remote Debugger'dan bus değerini oku; geri dönünce eski değer |
 | AC-10 | `AudioManager` script'inde `_process()` içinde `set_bus_volume_db` çağrısı yoktur | Statik kod incelemesi: `audio_manager.gd` dosyasında `_process` bloğu içinde `set_bus_volume_db` aranır — bulunmamalı |
+| AC-11 | Tekrarlayan SFX çağrılarında ardışık iki çalışta aynı stream seçilmez (`AudioStreamRandomizer` bunu garanti eder) | GUT: aynı randomizer ile 10 ardışık `play_sfx` çağrısı; arka arkaya aynı stream gelmemeli (shuffle mode aktif) |
+| AC-12 | HIGH öncelikli SFX, polyphony limitinde LOW öncelikli node'u keser; HIGH node çalmaya devam eder | GUT: `SFX_POLYPHONY_LIMIT` dolu LOW node varken HIGH priority `play_sfx` çağrısı; LOW node durdurulur, HIGH node çalar assert et |
 
 ## Open Questions
 
