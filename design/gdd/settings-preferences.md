@@ -65,8 +65,11 @@ yorma" güvencesi verir; oyun pili tüketmeden çalışır.
 | Değişken | Tip | Varsayılan | Açıklama |
 |----------|-----|------------|----------|
 | `battery_saver` | bool | false | False = 60 FPS, True = 30 FPS |
+| `haptic_enabled` | bool | true | Dokunsal geri bildirim (Android; iOS'ta etkisiz) |
 
 - `Engine.max_fps` ile uygulanır; değişiklik anında geçerli, sahne yeniden yüklenmez
+- `haptic_enabled` değişikliği anında geçerli; `SettingsSystem.get_haptic_enabled() → bool` API'si
+  ile okunur (`Touch/Gesture Input` sistemi bu API'ye bağımlıdır)
 
 #### Dil
 
@@ -163,6 +166,7 @@ Diğer ayar grupları (bildirimler, performans, dil, veri) boolean/enum değerle
 | `DEFAULT_AMBIENT_VOLUME` | 70 | Ambient slider varsayılanı |
 | `SILENCE_DB` | −80.0 dB | Slider=0 için dB değeri |
 | `DEFAULT_BATTERY_SAVER` | false (60 FPS) | Performans modu varsayılanı |
+| `DEFAULT_HAPTIC_ENABLED` | true | Dokunsal geri bildirim varsayılanı |
 | `DEFAULT_LANGUAGE` | `"tr"` | İlk açılış dili |
 | `DEFAULT_NOTIF_PRODUCTION` | true | Offline üretim bildirimi varsayılanı |
 | `DEFAULT_NOTIF_ORDER` | true | Sipariş bildirimi varsayılanı |
@@ -194,6 +198,7 @@ Diğer ayar grupları (bildirimler, performans, dil, veri) boolean/enum değerle
 - [ ] Kayıt Sil → dialog açılır → [Sil] → `user://` temizlenir → ana menüye yönlendirilir
 - [ ] Kayıt Sil → dialog açılır → [İptal] → hiçbir şey değişmez
 - [ ] Bozuk `settings.cfg` ile açılışta varsayılan değerler yüklenir, crash olmaz
+- [ ] `haptic_enabled=true` iken `SettingsSystem.get_haptic_enabled()` → `true`; toggle kapatılınca → `false`; değişiklik `settings.cfg`'ye kaydedilir ve yeniden açılışta korunur
 
 ## Open Questions
 

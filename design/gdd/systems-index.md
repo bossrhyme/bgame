@@ -5,7 +5,7 @@
 **Updated:** 2026-04-04
 **Source Concept:** `design/gdd/bread-master-core-design.md`
 **Total Systems:** 29
-**Designed:** 7 / 29
+**Designed:** 8 / 29
 **Monetization:** Rewarded Ad (IAP yok — zaman yatırımı = kazanım modeli)
 
 ---
@@ -31,7 +31,7 @@ katmanları arasında temiz bir sırayla tasarlanabilir.
 | 5 | Save/Load System | Persistence | MVP | Approved | [save-load-system.md](save-load-system.md) | Time Tracking, Economy |
 | 6 | Animation State Machine | Core | MVP | Approved | [animation-state-machine.md](animation-state-machine.md) | Settings |
 | 7 | Audio Bus/Mixer | Audio | MVP | Approved | [audio-bus-mixer.md](audio-bus-mixer.md) | Settings |
-| 8 | Touch/Gesture Input | Core | MVP | Not Started | — | Settings |
+| 8 | Touch/Gesture Input | Core | MVP | Approved | [touch-gesture-input.md](touch-gesture-input.md) | Settings |
 | 9 | Oven/Baking System | Gameplay | MVP | Not Started | — | Time Tracking, Economy |
 | 10 | Recipe System | Progression | MVP | Not Started | — | Content Database |
 | 11 | Customer/Order System | Gameplay | MVP | Not Started | — | Time Tracking, Economy, Animation |
