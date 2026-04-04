@@ -5,7 +5,7 @@
 **Updated:** 2026-04-03
 **Source Concept:** `design/gdd/bread-master-core-design.md`
 **Total Systems:** 29
-**Designed:** 2 / 29
+**Designed:** 4 / 29
 **Monetization:** Rewarded Ad (IAP yok — zaman yatırımı = kazanım modeli)
 
 ---
@@ -27,7 +27,7 @@ katmanları arasında temiz bir sırayla tasarlanabilir.
 | 1 | Time Tracking System | Core | MVP | Designed | [time-tracking-system.md](time-tracking-system.md) | — |
 | 2 | Content Database | Core | MVP | Designed | [content-database.md](content-database.md) | — |
 | 3 | Settings & Preferences | Core | MVP | Designed | [settings-preferences.md](settings-preferences.md) | — |
-| 4 | Economy System | Economy | MVP | Not Started | — | Time Tracking |
+| 4 | Economy System | Economy | MVP | Designed | [economy-system.md](economy-system.md) | Time Tracking |
 | 5 | Save/Load System | Persistence | MVP | Not Started | — | Time Tracking, Economy |
 | 6 | Animation State Machine | Core | MVP | Not Started | — | Settings |
 | 7 | Audio Bus/Mixer | Audio | MVP | Not Started | — | Settings |
@@ -218,7 +218,7 @@ Delivery System, Seasonal Events System, Performance Monitoring
 
 | Tier | Toplam | Tasarlandı | Tamamlandı |
 |------|--------|-----------|-----------|
-| MVP | 15 | 2 | 0 |
+| MVP | 15 | 4 | 0 |
 | Vertical Slice | 11 | 0 | 0 |
 | Alpha | 3 | 0 | 0 |
 | **Toplam** | **29** | **2** | **0** |
