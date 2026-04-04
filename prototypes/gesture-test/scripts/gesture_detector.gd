@@ -82,6 +82,8 @@ func _handle_drag(event: InputEventScreenDrag) -> void:
 	# Ignore if finger is too close to center (not a circular gesture)
 	if radius < MIN_RADIUS:
 		return
+	if radius > MAX_RADIUS:
+		return
 
 	var current_angle: float = atan2(offset.y, offset.x)
 
@@ -100,9 +102,8 @@ func _handle_drag(event: InputEventScreenDrag) -> void:
 	elif delta < -PI:
 		delta += TAU
 
-	# Accumulate clockwise rotation (positive delta = counter-clockwise in screen space)
-	# Screen Y-axis is flipped, so clockwise in screen = negative atan2 delta
-	# We track absolute value and check direction separately
+	# Y increases downward in Godot 2D, so atan2 CCW (positive delta) = CCW on screen.
+	# We accumulate all rotation (both directions); abs() handles direction at completion check.
 	_cumulative_angle += delta
 	_last_angle = current_angle
 

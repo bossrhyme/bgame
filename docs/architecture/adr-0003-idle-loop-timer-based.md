@@ -46,6 +46,11 @@ func _ready() -> void:
 func _on_bake_complete() -> void:
     _produce_bread()
     # Bir sonraki döngüyü otomatik başlat
+
+func _exit_tree() -> void:
+    # Freed node'da timer'ın çalışmaya devam etmesini engelle
+    if bake_timer and is_instance_valid(bake_timer):
+        bake_timer.stop()
 ```
 
 ### Offline Üretim
@@ -54,7 +59,10 @@ func _on_bake_complete() -> void:
 # Uygulama açılışında tek seferlik delta hesabı
 func calculate_offline_production(last_save_timestamp: int) -> int:
     var elapsed_seconds := Time.get_unix_time_from_system() - last_save_timestamp
-    var capped_seconds := min(elapsed_seconds, OFFLINE_CAP_SECONDS)
+    # NTP düzeltmesi veya sistem saati geriye giderse elapsed negatif olabilir.
+    # max(0.0, ...) ile negatif üretim hesabını önle.
+    var safe_elapsed := max(0.0, elapsed_seconds)
+    var capped_seconds := min(safe_elapsed, OFFLINE_CAP_SECONDS)
     return floor(capped_seconds / bake_time_seconds) * oven_capacity
 ```
 

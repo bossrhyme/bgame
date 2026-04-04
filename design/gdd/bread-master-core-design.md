@@ -224,9 +224,9 @@ Sıfırlama yok — her şehirde yeni fırın açılır, eskiler üretmeye devam
 
 | Upgrade | Sev.1 | Sev.2 | Sev.3 | Sev.4 | Sev.5 | Maliyet (Altın) |
 |---------|-------|-------|-------|-------|-------|-----------------|
-| Fırın Sıcaklığı | +10% hız | +25% hız | +50% hız | +80% hız | +120% hız | 50/150/400/1k/3k |
-| Fırın Kapasitesi | 2 ekmek | 4 ekmek | 6 ekmek | 8 ekmek | 12 ekmek | 100/300/800/2k/5k |
-| Hamur Kalitesi | +5% değer | +15% | +30% | +50% | +75% | 75/200/600/1.5k/4k |
+| Fırın Sıcaklığı | +10% hız | +25% hız | +50% hız | +80% hız | +120% hız | 50/150/450/1k/3k |
+| Fırın Kapasitesi | 2 ekmek | 4 ekmek | 6 ekmek | 8 ekmek | 12 ekmek | 100/300/900/2k/5k |
+| Hamur Kalitesi | +5% değer | +15% | +30% | +50% | +75% | 75/200/675/1.5k/4k |
 | Otomatik Hamur | Manuel | Yarı-otomatik | Tam otomatik | Hızlı oto | Süper oto | — /500/2k/6k/15k |
 | Malzeme Deposu | 10 birim | 25 birim | 50 birim | 100 birim | Sınırsız | 80/250/700/2k/— |
 
@@ -267,6 +267,8 @@ Sıfırlama yok — her şehirde yeni fırın açılır, eskiler üretmeye devam
 **Para Birimleri:**
 - **Altın:** Günlük harcama — upgrade, çalışan maaşı, malzeme
 - **Unlu Rozet:** Premium — VIP upgrade, dekorasyon, şehir açma hızlandırma
+  > **Politika:** Unlu Rozet yalnızca oyun içi kazanılır (günlük görevler, koleksiyon
+  > tamamlama, rewarded reklam izleme). Gerçek parayla satın alma yolu yoktur. (→ ADR-0002)
 
 **Erken Oyun (Sev. 1-10):**
 ```
@@ -292,6 +294,25 @@ Efsanevi ekmekler: 2.000-10.000 altın/adet
 ```
 
 ---
+
+### Reklam Monetizasyonu (Rewarded Ad Noktaları)
+
+> ADR-0002: Monetizasyon yalnızca rewarded (isteğe bağlı) reklamlardır. IAP yoktur.
+> Fill rate = 0 durumunda reklam butonu gizlenir — oyuncu hiçbir zaman engellenmez.
+
+| Reklam Noktası | Teklif | Günlük Limit |
+|---|---|---|
+| Offline dönüşü | 2× üretim cap (8s → 16s, o oturum için 1 kez) | 1 |
+| Günlük görev tamamlama | Rozet ödülünü 2× al | 3 |
+| Fırın kapasitesi dolu | Anında pişir (bekleme süresi atla) | 2 |
+| VIP müşteri gelişi | VIP süresini 10 dakika uzat | 3 |
+| Çoklu lokasyon açılışı | 3. lokasyondan itibaren %20 altın indirimi | 1 |
+
+**Toplam günlük reklam limiti:** 10 izleme/gün (tüm noktalar dahil)
+
+**Rozet kazanım oranı (reklamdan):**
+- Günlük görev reklamı: +50 Rozet bonus (günlük görev ödülüne ek)
+- Diğer noktalar: Rozet vermez, altın/süre avantajı sağlar
 
 ### Koleksiyon Sistemi
 

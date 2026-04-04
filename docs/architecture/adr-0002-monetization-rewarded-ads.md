@@ -68,13 +68,15 @@ Oyuncu gönüllü olarak reklam izler, somut oyun içi ödül alır:
 - Rewarded Ad SDK entegrasyonu gerekli (AdMob veya ironSource)
 - Düşük oynayan kullanıcıdan az gelir
 - Reklam envanteri her zaman dolu olmayabilir (fill rate sorunu)
+  → Fill rate = 0 UX: reklam teklif butonu gizlenir, hata mesajı gösterilmez, oyuncu engellenmez
+- Offline üretim 2× uzatma mekanizmasının detayları → `design/gdd/bread-master-core-design.md` Bölüm "Reklam Monetizasyonu"
 
 ## Teknik Gereksinimler
 
 - Ad Monetization System → Vertical Slice aşamasında entegre edilecek
-- Önerilen SDK: Google AdMob (iOS/Android çapraz platform, Godot eklentisi mevcut)
-- Günlük reklam limiti: kullanıcı başına max 5 rewarded ad fırsatı göster
-- Reklam yoksa (fill rate 0): teklif UI'ı gizle, hata gösterme
+- **SDK Kararı (Final):** Google AdMob — iOS/Android çapraz platform, Godot 4.x eklentisi mevcut, yüksek fill rate Türkiye/global
+- Günlük reklam limiti: kullanıcı başına max 10 rewarded ad fırsatı göster (GDD Bölüm "Reklam Monetizasyonu" ile uyumlu)
+- Reklam yoksa (fill rate 0): teklif UI'ı gizle, hata gösterme, oyuncu akışını engelleme
 
 ## Doğrulama Kriterleri
 

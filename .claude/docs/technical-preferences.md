@@ -36,7 +36,9 @@
 
 - Singleton/autoload'u veri deposu olarak kullanmak (sadece servis katmanı için)
 - Gameplay değerlerini kod içinde hardcode etmek (her zaman Resource/config dosyasından)
-- `_process()` içinde ağır hesaplama (idle sistemleri için timer bazlı güncelleme kullan)
+- `_process()` içinde gameplay logic veya ekonomi hesabı (idle sistemleri için timer bazlı güncelleme kullan)
+  - ✓ İzin verilenler: input polling, animasyon güncellemesi, debug UI yenileme
+  - ✗ Yasak: gameplay state değişikliği, timer güncelleme, ekonomi hesabı, offline üretim hesabı
 
 ## Allowed Libraries / Addons
 
