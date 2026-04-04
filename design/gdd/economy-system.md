@@ -1,6 +1,6 @@
 # Economy System
 
-> **Status**: Designed — Pending Review
+> **Status**: Approved
 > **Author**: User + Claude Code agents
 > **Last Updated**: 2026-04-04
 > **Implements Pillar**: Idle Progression — "Her oturumun ekonomik anlamı olmalı"
@@ -197,7 +197,7 @@ Economy System bu formüllerin sahibi değildir. Sadece sonucu `earn/spend` API'
 | `cost(n) = base_cost × 3^(n-1)` | `bread-master-core-design.md` | `spend_gold(cost)` alır |
 | `recipe_value = base_value × (1+quality) × location_mult` | `bread-master-core-design.md` | `earn_gold(recipe_value)` alır |
 | `final_gold = base_gold × max(0.5, 1 - loss/100)` | `bread-master-core-design.md` | `earn_gold(final_gold)` alır |
-| `items_produced = floor(min(elapsed,cap)/bake_time) × cap` | `bread-master-core-design.md` | `earn_gold(items × value)` alır |
+| `items_produced = floor(min(elapsed,cap)/bake_time) × oven_capacity` | `bread-master-core-design.md` | `earn_gold(items × value)` alır |
 | Günlük çalışan ücreti | `[Employee System GDD — henüz yazılmadı]` | `spend_gold(wage) -> bool` alır |
 | Rewarded ad rozet miktarı | `[Ad Monetization GDD — henüz yazılmadı]` | `earn_rozet(amount)` alır |
 
@@ -209,7 +209,7 @@ Economy System bu formüllerin sahibi değildir. Sadece sonucu `earn/spend` API'
 | 2 | `earn_gold(-50)` gibi negatif amount | Sessiz no-op; bakiye değişmez, sinyal yayılmaz |
 | 3 | `spend_gold(amount)`, bakiye ≥ amount | Bakiyeden düşer, `true` döner, `gold_changed` yayılır |
 | 4 | `spend_gold(amount)`, bakiye < amount | Bakiye değişmez, `false` döner, sinyal yayılmaz |
-| 5 | `spend_gold(0)` veya `spend_rozet(0)` | `false` döner; bakiye değişmez, sinyal yayılmaz |
+| 5 | `spend_gold(0)` veya `spend_rozet(0)` | `false` döner; bakiye değişmez, sinyal yayılmaz. Not: `amount=0` geçerli bir harcama olmadığından false dönmesi kasıtlıdır (`earn_gold(0)` no-op'tan farklı — o sessizce başarılı sayılır, bu açıkça reddeder) |
 | 6 | `spend_gold(-100)` gibi negatif amount | `false` döner; bakiye değişmez, sinyal yayılmaz |
 | 7 | LOADING'de `earn_gold(500)` çağrılır | Sessiz no-op; READY olmadan hiçbir işlem yapılmaz |
 | 8 | LOADING'de `spend_gold(100)` çağrılır | `false` döner; bakiye değişmez, sinyal yayılmaz |
@@ -232,6 +232,8 @@ Economy System bu formüllerin sahibi değildir. Sadece sonucu `earn/spend` API'
 | **Employee** | Hard | `spend_gold(wage) -> bool` — günlük ücret |
 | **Daily Task** | Soft | `earn_gold(amount)`, `earn_rozet(amount)` — görev ödülü |
 | **Ad Monetization** | Soft | `earn_gold(amount)`, `earn_rozet(amount)` — reklam ödülü |
+| **Location/Prestige** | Soft | `spend_gold(cost) -> bool` — lokasyon kiralama ücreti |
+| **Collection/Dex** | Soft | `earn_rozet(amount)` — koleksiyon tamamlama ödülü |
 
 ### Downstream (Economy sinyallerini dinleyen sistemler)
 
@@ -270,6 +272,11 @@ aşağıdaki efektleri başlatır — bu efektlerin implementasyonu ilgili siste
 |-------------|-------|-------------|
 | `gold_changed` (pozitif delta) | Coin burst animasyonu — altın coinler kazanım noktasından sayaca "uçar" | VFX/Particle |
 | `gold_changed` (büyük kazanım, ör. 1.000+) | Ekstra parıltı + ses katmanı | VFX/Particle, Sound |
+
+> **Sinyal tasarım notu (R-3):** `gold_changed(new_balance)` sadece yeni bakiyeyi taşır,
+> delta taşımaz. VFX sistemi önceki bakiyeyi kendi state'inde tutarak delta'yı hesaplamalı
+> veya büyük kazanım eşiği `GOLD_BURST_THRESHOLD = 1000` sabiti olarak VFX GDD'de tanımlanmalı.
+> Karar: **VFX/Particle GDD** tasarımında alınacak.
 | `spend_gold` → `true` | Satın alma "klik" sesi + hafif ekran titreşimi | Sound & Animation |
 | `spend_gold` → `false` (yetersiz bakiye) | Kısa "tık" reddetme sesi + bakiye göstergesi titriyor | Sound & Animation, UI/HUD |
 | `rozet_changed` (pozitif) | Rozet "parıldama" efekti — premium duygu | VFX/Particle |
@@ -312,5 +319,5 @@ Economy'den gelen sinyal değerleri UI'da şu şekillerde kullanılır:
 | OQ-1 | **Geç oyun gold scaling:** 6 lokasyon + tam upgrade ile günlük gelir milyonlara çıkabilir. Upgrade maliyet eğrisi (3^n) bu değerle birlikte kalibre edilmeli mi, yoksa geç oyun upgrade'leri farklı bir eğri mi kullanmalı? | Game Designer | Upgrade Tree GDD + Playtest |
 | OQ-2 | **VIP Lounge rozet maliyeti:** Mevcut 1.000 rozet ile aktif oyuncu ~1.5 günde erişiyor. "Uzun döngü biriktirme gururu" hedefiyle çelişiyor. Öneri: 5.000–7.000 rozete yükselt veya günlük kazanım tavanını düşür. Karar Upgrade Tree GDD'de alınacak. | Economy Designer + Game Designer | Upgrade Tree GDD |
 | OQ-3 | **Koleksiyon rozet ödülleri:** Her koleksiyon tamamlaması ne kadar rozet veriyor? Bu miktar belirlenmeden rozet havuzu analizi tamamlanamaz. | Game Designer | Collection/Dex GDD |
-| OQ-4 | **`initialize()` çağrı garantisi:** Save/Load sistemi her zaman Economy'den önce mi yükleniyor? Autoload sırası Godot proje ayarlarında garanti edilmeli. | Lead Programmer | Save/Load GDD |
+| OQ-4 | **`initialize()` çağrı garantisi ⚠ BLOCKER:** Save/Load sistemi her zaman Economy'den önce mi yükleniyor? Autoload sırası Godot proje ayarlarında garanti edilmeli. Save/Load GDD bu sırayı explicitly tanımlayana kadar Economy LOADING → READY geçişi güvenilir değil. | Lead Programmer | **Save/Load GDD — çözülmeden implementasyon başlamaz** |
 | OQ-5 | **Employee grev mantığı:** `spend_gold(wage) -> false` döndüğünde Employee sistemi çalışanı "grevde" işaretliyor. Economy'nin bu durumu bilmesi gerekiyor mu, yoksa Employee kendi state'ini yönetiyor mu? | Systems Designer | Employee System GDD |

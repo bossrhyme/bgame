@@ -27,7 +27,7 @@ katmanları arasında temiz bir sırayla tasarlanabilir.
 | 1 | Time Tracking System | Core | MVP | Designed | [time-tracking-system.md](time-tracking-system.md) | — |
 | 2 | Content Database | Core | MVP | Designed | [content-database.md](content-database.md) | — |
 | 3 | Settings & Preferences | Core | MVP | Designed | [settings-preferences.md](settings-preferences.md) | — |
-| 4 | Economy System | Economy | MVP | Designed | [economy-system.md](economy-system.md) | Time Tracking |
+| 4 | Economy System | Economy | MVP | Approved | [economy-system.md](economy-system.md) | Time Tracking |
 | 5 | Save/Load System | Persistence | MVP | Not Started | — | Time Tracking, Economy |
 | 6 | Animation State Machine | Core | MVP | Not Started | — | Settings |
 | 7 | Audio Bus/Mixer | Audio | MVP | Not Started | — | Settings |
