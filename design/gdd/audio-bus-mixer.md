@@ -1,6 +1,6 @@
 # Audio Bus/Mixer
 
-> **Status**: Draft Complete
+> **Status**: Approved
 > **Author**: User + Claude Code agents
 > **Last Updated**: 2026-04-04
 > **Implements Pillar**: ASMR & Tactile Feel — "Her eylem ayrı bir ses olmalı"
@@ -71,9 +71,9 @@ kasanın tıkırtısı... her şey yerinde."* ASMR deneyiminin temeli ses katman
     defasında biraz farklı duyurur; ASMR tekrar yorgunluğunu azaltır.
 11. **SFX öncelik sistemi.** `SFX_POLYPHONY_LIMIT` dolunca kesilecek node, öncelik tieriyle
     belirlenir:
-    - **HIGH:** Hasat tok, para ding, upgrade unlock, tarif açma — asla kesilmez
-    - **MEDIUM:** Müşteri sesleri, kapı gıcırtısı — yalnızca HIGH için yer açılır
-    - **LOW:** Tekrarlayan hamur yoğurma, coin shower tekrarları — ilk kesilecek
+    - **HIGH:** Hasat tok, para ding, upgrade unlock, tarif açma — eşzamanlı max `SFX_HIGH_PRIORITY_LIMIT` (4) node; bu limitte en eski HIGH kesilir
+    - **MEDIUM:** Müşteri sesleri, kapı gıcırtısı — yalnızca HIGH için yer açılır; `SFX_POLYPHONY_LIMIT` içinde sayılır
+    - **LOW:** Tekrarlayan hamur yoğurma, coin shower tekrarları — `SFX_POLYPHONY_LIMIT` dolunca ilk kesilecek
     `play_sfx(stream, bus, priority: int = SFX_PRIORITY_MEDIUM)` API'ye üçüncü parametre eklenir.
 
 ---
@@ -96,7 +96,7 @@ AudioServer
 |--------|---------------|----------------|--------|
 | **Settings & Preferences** | `audio_changed(music: int, sfx: int, ambient: int, mute: bool)` | — | Sinyal |
 | **Settings & Preferences** | `battery_saver_changed(value: bool)` | — | Sinyal |
-| **Sound & Animation System** *(provisional)* | `play_sfx(stream, bus)` çağrısı | — | `AudioManager` API |
+| **Sound & Animation System** *(provisional)* | `play_sfx(stream, bus, priority)` çağrısı | — | `AudioManager` API |
 | **Animation State Machine** | `play_sfx` track event callback'leri (dolaylı) | — | ASM GDD `animation-state-machine.md` Ses Eşleştirme tablosu |
 
 ## Formulas
@@ -181,6 +181,7 @@ volume = lerp(current_db, -80.0, t / AMBIENT_RELEASE_SEC)
 | `SFX_PRIORITY_HIGH` | `2` | Sabit | — | High priority SFX her zaman çalar; polyphony dışı | Lead Programmer |
 | `SFX_PRIORITY_MEDIUM` | `1` | Sabit | — | Varsayılan öncelik | Lead Programmer |
 | `SFX_PRIORITY_LOW` | `0` | Sabit | — | Polyphony dolunca ilk kesilir | Lead Programmer |
+| `SFX_HIGH_PRIORITY_LIMIT` | `4` | 2 – 8 | HIGH sesler birbirini keser; eşzamanlı upgrade/coin patlamasında tatmin bozulur | Çok fazla eşzamanlı HIGH node; mobil CPU baskısı | Lead Programmer |
 
 ## Visual/Audio Requirements
 
@@ -246,7 +247,7 @@ Settings & Preferences ekranına aittir. Bu sistem yalnızca o ekranın üretti�
 | AC-05 | `play_music(stream_b)` çağrıldığında eski track `MUSIC_CROSSFADE_SEC` süresinde fade-out, yeni track fade-in yapar | Manuel: iki stream ile çağrı; geçiş süresi `MUSIC_CROSSFADE_SEC ± 0.1 sn` |
 | AC-06 | `play_ambient` layer 0, 1, 2 bağımsız çalışır; `stop_ambient(1)` yalnızca katman 1'i durdurur | GUT: üç katman başlat; her `stop_ambient(id)` yalnızca hedef katmanı durdurur assert et |
 | AC-07 | 4. `play_ambient()` çağrısı `push_error` ile loglanır; mevcut 3 katman etkilenmez | GUT: 3 katman dolu → 4. çağrı; error loglandı + katman sayısı 3 assert et |
-| AC-08 | Hızlı ardışık `play_sfx()` `SFX_POLYPHONY_LIMIT`'i aşmaz; limit aşılınca en eski node durdurulur | GUT: `LIMIT + 2` kez çağır; `get_child_count() <= LIMIT` + en eski `playing == false` assert et |
+| AC-08 | Hızlı ardışık `play_sfx()` `SFX_POLYPHONY_LIMIT`'i aşmaz; limit aşılınca en düşük öncelikli (LOW) node durdurulur; HIGH priority node çalmaya devam eder | GUT: `LIMIT + 2` kez LOW priority `play_sfx` çağır; `get_child_count() <= LIMIT` assert et |
 | AC-09 | Uygulama arka plana alınca `Master` `-80.0 dB`; öne gelince önceki değer restore edilir | Manuel: home tuşu → Remote Debugger'dan bus değerini oku; geri dönünce eski değer |
 | AC-10 | `AudioManager` script'inde `_process()` içinde `set_bus_volume_db` çağrısı yoktur | Statik kod incelemesi: `audio_manager.gd` dosyasında `_process` bloğu içinde `set_bus_volume_db` aranır — bulunmamalı |
 | AC-11 | Tekrarlayan SFX çağrılarında ardışık iki çalışta aynı stream seçilmez (`AudioStreamRandomizer` bunu garanti eder) | GUT: aynı randomizer ile 10 ardışık `play_sfx` çağrısı; arka arkaya aynı stream gelmemeli (shuffle mode aktif) |
@@ -259,3 +260,4 @@ Settings & Preferences ekranına aittir. Bu sistem yalnızca o ekranın üretti�
 | OQ-01 | Sound & Animation System (Sistem #23) GDD'si yazılmadan `play_sfx` API imzası sabitlenebilir mi? | ABM değişmez; Sound & Animation kodu etkilenir | Lead Programmer | Sistem #23 GDD başlamadan önce |
 | OQ-02 | Lokasyona göre farklı müzik track'i kullanılacak mı? (Location/Prestige bağlantısı) | "Evet" ise `play_music` çağrıları Location GDD'ye bağlanmalı; müzik asset sayısı artar | Game Designer | Location/Prestige GDD sırasında |
 | OQ-03 | Godot 4.6'da arka plan algılaması için `ApplicationPaused` sinyali mi, `ApplicationFocusChanged` mi kullanılmalı? | Edge Case #5 ve AC-09'un implementasyonu buna bağlı | Lead Programmer | Implementasyona başlamadan |
+| OQ-04 | `AudioStreamRandomizer`'ın "arka arkaya aynı stream gelmesin" özelliği Godot 4.6'da hangi property ile sağlanıyor? (`prevent_same_two_in_a_row` mı, başka bir ad mı?) | AC-11 bu property'e bağlı | Lead Programmer | Implementasyona başlamadan |
