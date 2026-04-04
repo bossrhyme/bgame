@@ -1,6 +1,6 @@
 # Save/Load System
 
-> **Status**: Designed — Pending Review
+> **Status**: Designed — Approved (Post-Review)
 > **Author**: User + Claude Code agents
 > **Last Updated**: 2026-04-04
 > **Implements Pillar**: Idle Progression — "Her oturumun ekonomik anlamı olmalı"
@@ -59,7 +59,7 @@ düşünmemesini sağlamak.
 3. **`_process()` yasağı.** Hiçbir kayıt veya okuma işlemi `_process()` ya
    da `_physics_process()` içinde gerçekleştirilmez (ADR-0003).
 
-4. **Kayıt tetikleyicileri.** Aşağıdaki olaylar anında `_save_game()` tetikler:
+4. **Kayıt tetikleyicileri.** Aşağıdaki olaylar `_save_game()` tetikler:
    - `NOTIFICATION_WM_GO_BACK_REQUEST` — geri tuşu / uygulama kapanması
    - `NOTIFICATION_APPLICATION_FOCUS_OUT` — iOS arka plan geçişi güvenlik katmanı
      (Time Tracking OQ-1 yanıtı)
@@ -67,14 +67,24 @@ düşünmemesini sağlamak.
    - Lokasyon kilidi açma (Location/Prestige sinyali)
    - Tarif kilidi açma (Recipe System sinyali)
    - Çalışan işe alma / çıkarma (Employee System sinyali)
+   - Koleksiyon öğesi keşfedildi (Collection/Dex sinyali)
+   - Tutorial adımı ilerledi (Tutorial System sinyali)
+   - Günlük görev tamamlandı veya sıfırlandı (Daily Task sinyali)
+
+   > **Kapsam notu:** `tutorial_step`, `collection_progress`, `daily_task_history`
+   > ve `daily_task_reset_unix` alanları yalnızca bu tetikleyiciler aracılığıyla
+   > güncel tutulur. Uygulama kapanışı tetikleyicisi (`NOTIFICATION_*`) bunları
+   > da kapsar — bu nedenle en kötü senaryoda veri yalnızca son kapanışta
+   > yazılmış olabilir; ilgili sinyal geldiğinde ise anında kaydedilir.
 
 5. **Atomik yazma (geçici dosya + rename pattern).** Doğrudan üzerine yazmak
    yerine:
-   1. Veri `user://save_game.cfg.tmp` geçici dosyasına yazılır
-   2. `FileAccess.store_*` dönüş değerleri (`bool` — Godot 4.4+ API) kontrol
-      edilir; herhangi biri `false` ise yazma iptal edilir, `.tmp` silinir
-   3. Başarı durumunda `DirAccess.rename("user://save_game.cfg.tmp",
+   1. `ConfigFile.set_value()` çağrıları ile tüm veriler bellek nesnesine yazılır
+   2. `ConfigFile.save("user://save_game.cfg.tmp")` çağrısı fiziksel yazımı yapar
+      ve `Error` kodu döner; `OK` dışında bir değer yazma başarısızlığını gösterir
+   3. Başarı (`OK`): `DirAccess.rename("user://save_game.cfg.tmp",
       "user://save_game.cfg")` ile atomik taşıma yapılır
+   4. Başarısızlık: `.tmp` silinir, mevcut `.cfg` bozulmadan korunur
    Bu yöntem yarı yazılmış / bozuk kayıt riskini ortadan kaldırır.
 
 6. **Bozuk kayıt tespiti ve kurtarma.** `_load_game()` şu koşulları işler:
@@ -113,7 +123,12 @@ düşünmemesini sağlamak.
     ilerlemesini içerir. Ses, dil, bildirim tercihleri `user://settings.cfg`
     dosyasında `SettingsManager` tarafından yönetilir. İki dosya birleştirilmez.
 
-12. **Versiyon şeması.** `[meta] save_version: int` her kayıt dosyasında bulunur
+12. **Debounce.** Ardışık kayıt çağrıları `SAVE_DEBOUNCE_MS` (varsayılan: 500 ms)
+    içinde tekilleştirilir. Pencere içinde gelen ikinci tetikleyici yoksayılır;
+    yalnızca tek fiziksel yazma gerçekleşir. Bu, `NOTIFICATION_APPLICATION_FOCUS_OUT`
+    ile `NOTIFICATION_WM_GO_BACK_REQUEST`'in aynı anda tetiklenmesi durumunu kapsar.
+
+13. **Versiyon şeması.** `[meta] save_version: int` her kayıt dosyasında bulunur
     (mevcut: `1`). Şema değişirse `SaveLoadManager` farkı tespit eder ve
     migration script'ini çalıştırır; eksik anahtarlar varsayılanla doldurulur.
 
@@ -226,18 +241,22 @@ elif loaded_version > CURRENT_SAVE_VERSION:
 
 ### F-2: Atomik Yazma Başarı Kontrolü
 
-```
-write_success = true
-for each ConfigFile.store_* call:
-    if result == false:   # Godot 4.4+ bool dönüş
-        write_success = false
-        break
+`ConfigFile` API'si: değerler `set_value()` ile bellekte tutulur; `save(path)` çağrısı
+fiziksel yazımı yapar ve `Error` kodu döner. Granüler bool döngüsü yoktur.
 
-if write_success:
-    DirAccess.rename("save_game.cfg.tmp", "save_game.cfg")  # atomik
+```
+config = ConfigFile.new()
+config.set_value("economy", "gold", gold)
+config.set_value("economy", "rozet", rozet)
+config.set_value("time", "last_seen_unix", now_unix)
+# ... diğer tüm set_value() çağrıları ...
+
+var err: Error = config.save("user://save_game.cfg.tmp")
+if err == OK:
+    DirAccess.rename("user://save_game.cfg.tmp", "user://save_game.cfg")  # atomik
 else:
-    FileAccess.remove("save_game.cfg.tmp")  # kirli dosyayı temizle
-    push_error("Save failed — previous save preserved")
+    DirAccess.remove("user://save_game.cfg.tmp")  # kirli dosyayı temizle
+    push_error("Save failed (%s) — previous save preserved" % error_string(err))
 ```
 
 ## Edge Cases
@@ -253,7 +272,7 @@ else:
 | 7 | Atomik yazma sırasında kapanma (`.tmp` diskte kalır) | Mevcut `.cfg` bozulmamış; veri kaybı yok; bir sonraki açılışta 8. madde devreye girer |
 | 8 | Açılışta `save_game.cfg.tmp` kalıntısı tespit edilir | `FileAccess.remove()` ile silinir; `push_warning("Stale .tmp removed")`; normal yükleme devam eder |
 | 9 | İki notification aynı anda / kısa aralıkla tetiklenir | Debounce (`SAVE_DEBOUNCE_MS`): ilk tetikleyici yazar, ikincisi yoksayılır; tek fiziksel yazma |
-| 10 | `LOADING` durumunda `_save_game()` tetiklenir | State guard: `if _state != READY: return`; `push_warning("Save skipped — still loading")`; READY'de sonraki tetikleyicide yazılır |
+| 10 | `LOADING` durumunda `_save_game()` tetiklenir | State guard: `if _state != READY: return`; `push_warning("Save skipped — still loading")`. LOADING süresi < 1 sn olduğundan veri kaybı riski minimumdur. LOADING sırasında uygulama çökerse (batarya / crash) en son kapanış kaydı korunur — o oturumda yapılan değişiklikler (henüz kaydedilmemiş upgrade vb.) kaybolabilir; bu kabul edilen bir risk. |
 | 11 | Disk dolu — `FileAccess.store_*` `false` döner | `.tmp` silinir; mevcut `.cfg` korunur; `push_error("Save failed: disk full")` |
 | 12 | `last_seen_unix = 0` (yeni oyun) | Downstream sistemler elapsed = 0 alır; offline üretim hesaplanmaz |
 | 13 | `get_save_data()` listede olmayan sistemden bekleniyor | Yeni sistem eklenmek için GDD güncellemesi ve autoload sırası revizyonu gerekir — mimari olarak kasıtlı kısıt |

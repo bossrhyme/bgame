@@ -28,7 +28,7 @@ katmanları arasında temiz bir sırayla tasarlanabilir.
 | 2 | Content Database | Core | MVP | Designed | [content-database.md](content-database.md) | — |
 | 3 | Settings & Preferences | Core | MVP | Designed | [settings-preferences.md](settings-preferences.md) | — |
 | 4 | Economy System | Economy | MVP | Approved | [economy-system.md](economy-system.md) | Time Tracking |
-| 5 | Save/Load System | Persistence | MVP | Designed | [save-load-system.md](save-load-system.md) | Time Tracking, Economy |
+| 5 | Save/Load System | Persistence | MVP | Approved | [save-load-system.md](save-load-system.md) | Time Tracking, Economy |
 | 6 | Animation State Machine | Core | MVP | Not Started | — | Settings |
 | 7 | Audio Bus/Mixer | Audio | MVP | Not Started | — | Settings |
 | 8 | Touch/Gesture Input | Core | MVP | Not Started | — | Settings |
@@ -218,7 +218,7 @@ Delivery System, Seasonal Events System, Performance Monitoring
 
 | Tier | Toplam | Tasarlandı | Tamamlandı |
 |------|--------|-----------|-----------|
-| MVP | 15 | 5 | 0 |
+| MVP | 15 | 4 | 1 |
 | Vertical Slice | 11 | 0 | 0 |
 | Alpha | 3 | 0 | 0 |
 | **Toplam** | **29** | **2** | **0** |
