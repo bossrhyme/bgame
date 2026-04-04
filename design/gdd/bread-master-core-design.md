@@ -99,6 +99,9 @@ Toplam 40+ ekmek tarifi, 5 kategoride:
 - Max offline süre: **8 saat** (geç oyunda 12 saate çıkar)
 - Geri dönüşte "Fırından yeni çıktı!" animasyonu ve patlama
 - Premium upgrade ile offline süre uzar
+- **Çoklu lokasyon offline kuralı:** Her lokasyon **bağımsız cap** uygular — havuz değil.
+  6 lokasyon × 8 saat cap = her biri kendi 8 saatini doldurur. Toplam üretim toplanır.
+  (Karar gerekçesi: havuz sistemi karmaşık UI gerektirir, oyuncu "hangi fırın ne üretti?" sorusunu sorar.)
 
 ---
 

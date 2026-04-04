@@ -26,11 +26,20 @@
 - **Draw Calls**: Mobil için max 100 draw call/frame
 - **Memory Ceiling**: 512MB (mobil mid-range hedef)
 
+## Performance Budgets — Mobile Renderer Kısıtları
+
+- **Draw Calls**: Max 100/frame — Godot Profiler → Monitors → Render/draw_calls ile takip et
+- **Texture Atlas**: Sprite'lar atlas'a gruplandırılmalı; tek sprite = tek draw call engeli
+- **CanvasLayer limiti**: Maksimum 4 CanvasLayer önerilir (UI, HUD, VFX, Debug)
+- **Shader karmaşıklığı**: Fragment shader'da döngü yasak; Mobile Renderer'da custom shader test et
+
 ## Testing
 
-- **Framework**: GUT (Godot Unit Testing) — https://github.com/bitwes/Gut
-- **Minimum Coverage**: Tüm gameplay formülleri ve ekonomi sistemi
+- **Framework**: GUT (Godot Unit Testing) v9.x — Godot 4.6 uyumlu (`https://github.com/bitwes/Gut`)
+  - GUT 4.6 uyumluluğu: `gut_cli.gd` ile komut satırından çalıştırılabilir; minimum v9.3.0 gerekli
+- **Minimum Coverage**: Tüm gameplay formülleri ve ekonomi sistemi (%80 hedef)
 - **Required Tests**: Offline üretim hesabı, upgrade maliyet ölçekleme, müşteri memnuniyeti, tarif açma koşulları
+- **Zamansal testler**: 8 saatlik offline mock timestamp ile simüle edilir (`Time.get_unix_time_from_system()` mock'lanır)
 
 ## Forbidden Patterns
 
