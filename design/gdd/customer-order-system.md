@@ -9,7 +9,8 @@
 ---
 
 ## 1. Overview
-<!-- TBD -->
+
+Ekmek Ustası'nın Customer/Order System'i, oyuncunun fırın vitrininde eş zamanlı olarak max 4 aktif sipariş yönettiği, zaman baskılı bir istek-karşılama döngüsüdür. Dört müşteri tipi (Sabırlı, Acele, VIP, Festival) farklı sabır süreleri ve ödül çarpanlarıyla sahneye girer. Zamanında teslim tam altın, geç teslim %50 altın, teslim edilemeyen sipariş müşteri kaçışı ve memnuniyet cezası üretir. Sistem, Time Tracking üzerinden sabır sayaçlarını yönetir; Economy üzerinden altın öder; Upgrade Tree'den aldığı CustomerConfig Resource ile kapasite, sabır ve spawn parametrelerini günceller.
 
 ## 2. Player Fantasy
 <!-- TBD -->
