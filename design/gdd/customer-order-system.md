@@ -103,7 +103,21 @@ remaining_patience = (customer.patience_base × patience_multiplier) - elapsed_t
 | **Seasonal Events System** (#28) | Festival müşteri tipi aktif/pasif durumu |
 
 ## 7. Tuning Knobs
-<!-- TBD -->
+
+| Parametre | Varsayılan | Açıklama |
+|-----------|-----------|----------|
+| `max_active_orders` | 4 | Eş zamanlı sipariş slotu |
+| `base_spawn_interval` | 30 sn | Slot açıldıktan sonra yeni müşteri için bekleme |
+| `patience_sabırlı` | 300 sn | Sabırlı müşteri sabır süresi |
+| `patience_acele` | 90 sn | Acele müşteri sabır süresi |
+| `patience_vip` | 180 sn | VIP müşteri sabır süresi |
+| `patience_festival` | 600 sn | Festival müşteri sabır süresi |
+| `grace_duration` | 10 sn | Sabır dolunca ek süre |
+| `spawn_weight_sabırlı` | 60 | Spawn havuzu ağırlığı |
+| `spawn_weight_acele` | 25 | Spawn havuzu ağırlığı |
+| `spawn_weight_vip` | 5 | Spawn havuzu ağırlığı |
+| `satisfaction_slow_threshold` | 5 | Bu değer ≤ spawn %20 yavaşlar |
+| `satisfaction_recovery_streak` | 5 | Arka arkaya başarılı teslim → +1 memnuniyet |
 
 ## 8. Acceptance Criteria
 <!-- TBD -->
