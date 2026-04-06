@@ -120,7 +120,17 @@ remaining_patience = (customer.patience_base × patience_multiplier) - elapsed_t
 | `satisfaction_recovery_streak` | 5 | Arka arkaya başarılı teslim → +1 memnuniyet |
 
 ## 8. Acceptance Criteria
-<!-- TBD -->
+
+- [ ] 4 sipariş slotu eş zamanlı görünür; 5. müşteri slot açılana kadar spawn edilmez
+- [ ] Sabırlı müşteri 5 dakika sonra grace başlatır, 10 sn sonra kaçar
+- [ ] Acele müşteri 90 sn sonra grace başlatır, 10 sn sonra kaçar
+- [ ] VIP siparişi zamanında teslim edildiğinde `base_price × 3.0` altın ödenir
+- [ ] Kaçan her müşteri memnuniyeti 1 düşürür; 5 arka arkaya başarılı teslim 1 artırır
+- [ ] Memnuniyet ≤ 5 olduğunda spawn aralığı %25 uzar
+- [ ] Memnuniyet = 0 olduğunda hiç müşteri spawn edilmez
+- [ ] Uygulama arka planda iken sabır sayacı gerçek zamanlı devam eder; geri dönüşte doğru hesaplanır
+- [ ] `CustomerConfig` Resource değerleri değiştirildiğinde (Upgrade Tree simülasyonu) sistem yeni değerlerle çalışır
+- [ ] GUT testi: offline 8 saat sonra tüm aktif siparişlerin kaçmış sayıldığı doğrulanır
 
 ---
 
