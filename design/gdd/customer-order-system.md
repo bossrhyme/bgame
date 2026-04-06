@@ -19,7 +19,34 @@ Ekmek Ustası'nın Customer/Order System'i, oyuncunun fırın vitrininde eş zam
 **Kaçınılması gereken:** Sipariş baskısının ceza odaklı hissettirmesi. Kaçırılan her müşteri küçük bir hayal kırıklığı olmalı, oyun sonu değil.
 
 ## 3. Detailed Rules
-<!-- TBD -->
+
+### Sipariş Panosu
+
+- Ekranda aynı anda max **4 aktif sipariş** görünür (`max_active_orders = 4`)
+- 4 slot doluyken yeni müşteri gelmez; slot açılınca spawn tetiklenir
+
+### Müşteri Tipleri
+
+| Tip | Sabır Süresi | Ödül Çarpanı | Spawn Ağırlığı |
+|-----|-------------|-------------|----------------|
+| Sabırlı | 5 dak. | 1.0x | 60% |
+| Acele | 90 sn | 1.5x | 25% |
+| VIP | 3 dak. | 3.0x | 5% |
+| Festival | 10 dak. | 2.0x (toplu) | Yalnızca etkinlik günü |
+
+### Teslim Sonuçları
+
+- Sabır süresi dolmadan teslim → **tam altın**
+- Sabır süresi dolmuş, sipariş hâlâ teslim edilmemişse **10 sn grace süresi** başlar → bu sürede teslim edilirse **%50 altın**
+- Grace süresi de geçerse → müşteri kaçar, **memnuniyet −1** (max 10, min 0)
+
+### Müşteri Memnuniyeti
+
+- Başlangıç: 10/10
+- Her kaçan müşteri: −1
+- Her 5 başarılı teslim: +1 (max 10'a kadar)
+- Memnuniyet ≤ 5 → spawn hızı %20 yavaşlar
+- Memnuniyet = 0 → yeni müşteri gelmez (fırın "kötü ünlü" durumu)
 
 ## 4. Formulas
 <!-- TBD -->
