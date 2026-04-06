@@ -92,7 +92,15 @@ remaining_patience = (customer.patience_base × patience_multiplier) - elapsed_t
 | Vitrin stoğu yok ama sipariş var | Sipariş panosunda "stok yok" göstergesi çıkar; sabır sayacı durmaz |
 
 ## 6. Dependencies
-<!-- TBD -->
+
+| Sistem | Kullanım |
+|--------|----------|
+| **Time Tracking System** (#1) | Sabır sayacı ve grace süresi için `Time.get_unix_time_from_system()` |
+| **Economy System** (#4) | `final_gold` hesabı ve altın ödeme işlemi |
+| **Animation State Machine** (#6) | Müşteri gelişi, bekleme, kaçış ve memnuniyet animasyonları |
+| **Content Database** (#2) | Tarif `base_price` değerlerinin okunması |
+| **Upgrade Tree System** (#12) *(provisional)* | `CustomerConfig` Resource üzerinden `patience_multiplier`, `max_active_orders`, `vip_spawn_rate`, `repeat_customer_gold_bonus` |
+| **Seasonal Events System** (#28) | Festival müşteri tipi aktif/pasif durumu |
 
 ## 7. Tuning Knobs
 <!-- TBD -->
