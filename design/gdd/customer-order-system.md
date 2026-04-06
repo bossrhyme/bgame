@@ -80,7 +80,16 @@ remaining_patience = (customer.patience_base × patience_multiplier) - elapsed_t
 `patience_multiplier` → CustomerConfig Resource'dan gelir (Upgrade Tree provisional arayüzü)
 
 ## 5. Edge Cases
-<!-- TBD -->
+
+| Durum | Davranış |
+|-------|----------|
+| Oyun arka plana alınır, sabır sayacı devam eder mi? | Evet — Time Tracking üzerinden gerçek geçen süre hesaplanır; geri dönüşte sipariş zaten dolmuş olabilir |
+| Oyuncu geri döndüğünde grace süresi dolmuş sipariş | Müşteri anında kaçmış sayılır, memnuniyet cezası uygulanır |
+| Aynı anda 4 slot dolu, VIP gelirse | VIP spawn edilmez; slot açılınca normal spawn havuzuna girer (VIP önceliği yoktur) |
+| Festival müşterisi etkinlik sona ererken sahne değişirse | Mevcut Festival siparişi tamamlanabilir, yeni Festival müşterisi spawn edilmez |
+| Memnuniyet 0'dan negatife düşemez | Floor = 0, tavan = 10 |
+| Aynı tarif için birden fazla aktif sipariş | İzin verilir — oyuncu stok yönetimi yapmalı |
+| Vitrin stoğu yok ama sipariş var | Sipariş panosunda "stok yok" göstergesi çıkar; sabır sayacı durmaz |
 
 ## 6. Dependencies
 <!-- TBD -->
