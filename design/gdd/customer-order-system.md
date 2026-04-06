@@ -49,7 +49,35 @@ Ekmek Ustası'nın Customer/Order System'i, oyuncunun fırın vitrininde eş zam
 - Memnuniyet = 0 → yeni müşteri gelmez (fırın "kötü ünlü" durumu)
 
 ## 4. Formulas
-<!-- TBD -->
+
+### Sipariş Altın Hesabı
+
+```
+base_gold = recipe.base_price × customer.reward_multiplier
+final_gold = base_gold × delivery_modifier × satisfaction_bonus
+```
+
+| Değişken | Açıklama |
+|----------|----------|
+| `delivery_modifier` | Zamanında: 1.0 / Grace süresi: 0.5 |
+| `satisfaction_bonus` | memnuniyet 8-10 → 1.1x, 5-7 → 1.0x, 1-4 → 0.9x |
+
+### Spawn Aralığı
+
+```
+spawn_interval = base_spawn_interval × spawn_speed_modifier
+spawn_speed_modifier = 1.0  (memnuniyet > 5)
+spawn_speed_modifier = 1.25 (memnuniyet ≤ 5)  ← yavaşlama
+spawn_speed_modifier = ∞    (memnuniyet = 0)  ← durdurulmuş
+```
+
+### Sabır Sayacı
+
+```
+remaining_patience = (customer.patience_base × patience_multiplier) - elapsed_time
+```
+
+`patience_multiplier` → CustomerConfig Resource'dan gelir (Upgrade Tree provisional arayüzü)
 
 ## 5. Edge Cases
 <!-- TBD -->
