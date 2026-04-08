@@ -2,7 +2,7 @@
 
 **Sistem:** #12 / 29
 **Kategori:** Progression — MVP
-**Durum:** Draft
+**Durum:** Designed
 **Bağımlılıklar:** Economy System, Content Database
 **Provisional Arayüzleri Netleştirir:** CustomerConfig Resource (Sistem #11)
 
@@ -136,7 +136,41 @@ effect = UpgradeData.effect_per_level[current_level - 1]
 ---
 
 ### Appendix A — Upgrade Kataloğu
-<!-- TBD -->
+
+#### Üretim Upgrades
+
+| ID | Görünen Ad | Max Sev. | effect_per_level | base_cost |
+|----|-----------|---------|-----------------|-----------|
+| `oven_temperature` | Fırın Sıcaklığı | 5 | [0.10, 0.25, 0.50, 0.80, 1.20] | 50 |
+| `dough_quality` | Hamur Kalitesi | 5 | [0.05, 0.15, 0.30, 0.50, 0.80] | 100 |
+| `oven_capacity` | Fırın Kapasitesi | 5 | [1, 2, 4, 6, 10] | 75 |
+| `auto_dough` | Otomatik Hamur | 3 | [1, 2, 3] | 500 |
+| `ingredient_storage` | Malzeme Deposu | 4 | [10, 25, 50, 100] | 80 |
+
+#### Müşteri Upgrades
+
+| ID | Görünen Ad | Para | Max Sev. | effect_per_level | base_cost |
+|----|-----------|------|---------|-----------------|-----------|
+| `showcase_width` | Vitrin Genişliği | Altın | 3 | [2, 2, 2] | 200 |
+| `customer_satisfaction` | Müşteri Memnuniyeti | Altın | 3 | [0.20, 0.20, 0.20] | 300 |
+| `vip_lounge` | VIP Lounge | Rozet | 1 | [0.50] | 1.000 |
+| `loyalty_card` | Sadakat Kartı | Altın | 1 | [0.30] | 2.000 |
+
+#### Teslimat Upgrades
+
+| ID | Görünen Ad | Max Sev. | effect_per_level | base_cost |
+|----|-----------|---------|-----------------|-----------|
+| `delivery_capacity` | Teslimat Kapasitesi | 3 | [1, 2, 3] | 400 |
+| `delivery_speed` | Teslimat Hızı | 3 | [0.25, 0.50, 1.00] | 300 |
 
 ### Appendix B — CustomerConfig Bağlantısı (Provisional → Confirmed)
-<!-- TBD -->
+
+| CustomerConfig alanı | Kaynağı | Hesaplama |
+|----------------------|---------|-----------|
+| `max_active_orders` | `showcase_width` | 4 + sum(effect_per_level[0..level-1]) |
+| `patience_multiplier` | `customer_satisfaction` | 1.0 + sum(effect_per_level[0..level-1]) |
+| `vip_spawn_rate` | `vip_lounge` | 0.05 × (1.0 + effect_per_level[0]) |
+| `repeat_customer_gold_bonus` | `loyalty_card` | effect_per_level[0] if level=1 else 0.0 |
+
+> Bu tablo Customer/Order System GDD Appendix A'daki provisional arayüzü teyit eder.
+> CustomerConfig Resource Upgrade Tree tarafından doldurulur; Customer/Order System okur.

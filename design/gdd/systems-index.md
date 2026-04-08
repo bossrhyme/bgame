@@ -5,7 +5,7 @@
 **Updated:** 2026-04-06
 **Source Concept:** `design/gdd/bread-master-core-design.md`
 **Total Systems:** 29
-**Designed:** 11 / 29
+**Designed:** 12 / 29
 **Monetization:** Rewarded Ad (IAP yok — zaman yatırımı = kazanım modeli)
 
 ---
@@ -35,7 +35,7 @@ katmanları arasında temiz bir sırayla tasarlanabilir.
 | 9 | Oven/Baking System | Gameplay | MVP | Approved | [oven-baking-system.md](oven-baking-system.md) | Time Tracking, Economy |
 | 10 | Recipe System | Progression | MVP | Designed | [recipe-system.md](recipe-system.md) | Content Database |
 | 11 | Customer/Order System | Gameplay | MVP | Designed | [customer-order-system.md](customer-order-system.md) | Time Tracking, Economy, Animation |
-| 12 | Upgrade Tree System | Progression | MVP | Not Started | — | Economy, Content Database |
+| 12 | Upgrade Tree System | Progression | MVP | Designed | [upgrade-tree-system.md](upgrade-tree-system.md) | Economy, Content Database |
 | 13 | Employee System | Gameplay | MVP | Not Started | — | Economy, Time Tracking |
 | 14 | Unlock/Condition Resolver | Core | MVP | Not Started | — | Recipe, Upgrade Tree, Location |
 | 15 | UI/HUD System | UI | MVP | Not Started | — | Economy, Customer/Order, Upgrade Tree |
