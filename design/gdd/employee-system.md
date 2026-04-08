@@ -51,7 +51,35 @@ Employee System, oyuncunun günlük ücret karşılığında işe aldığı çal
 - Yükseltme anında efekt güncellenir
 
 ## 4. Formulas
-<!-- TBD -->
+
+### İşe Alma / Yükseltme Maliyeti
+
+```
+hire_cost(level) = daily_wage × 10 × level
+```
+
+| Tip | Günlük Ücret | Sev.1 | Sev.2 | Sev.3 |
+|-----|-------------|-------|-------|-------|
+| Hamurcu Yardımcısı | 50 | 500 | 1.000 | 1.500 |
+| Fırın Ustası | 80 | 800 | 1.600 | 2.400 |
+| Kasiyer | 60 | 600 | 1.200 | 1.800 |
+| Teslimatçı | 100 | 1.000 | 2.000 | 3.000 |
+
+### Efekt Hesabı
+
+```
+total_effect = effect_per_level × current_level
+```
+
+Örnek — Hamurcu Sev.2: `0.25 × 2 = 0.50` → hamur hızı +%50
+
+### Günlük Ücret Kesintisi
+
+```
+daily_cost = sum(active_employee.daily_wage for each active employee)
+```
+
+Time Tracking günlük sıfırlamasında Economy'den toplam `daily_cost` düşülür.
 
 ## 5. Edge Cases
 <!-- TBD -->
