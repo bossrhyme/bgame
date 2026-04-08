@@ -94,10 +94,30 @@ Time Tracking günlük sıfırlamasında Economy'den toplam `daily_cost` düşü
 | Çalışan işten çıkarılabilir mi? | Evet — işten çıkarma anında efekt durur, günlük ücret kesilmez; işe alma maliyeti iade edilmez |
 
 ## 6. Dependencies
-<!-- TBD -->
+
+| Sistem | Kullanım |
+|--------|----------|
+| **Economy System** (#4) | İşe alma maliyeti, yükseltme maliyeti ve günlük ücret kesintisi |
+| **Time Tracking System** (#1) | Günlük sıfırlama sinyali → ücret kesintisini tetikler |
+| **Save/Load System** (#5) | Aktif çalışanlar, seviyeleri ve grev durumları kaydedilir |
+| **Oven/Baking System** (#9) | Fırın Ustası efekti pişirme hızını etkiler |
+| **Offline Production System** (#16) *(vertical slice)* | Hamurcu ve Fırın Ustası offline üretimde de aktif kalır |
+| **Delivery System** (#27) *(alpha)* | Teslimatçı efekti teslimat kapasitesini etkiler |
 
 ## 7. Tuning Knobs
-<!-- TBD -->
+
+| Parametre | Varsayılan | Açıklama |
+|-----------|-----------|----------|
+| `hamurcu_daily_wage` | 50 altın | Hamurcu günlük ücreti |
+| `firinci_daily_wage` | 80 altın | Fırın Ustası günlük ücreti |
+| `kasiyer_daily_wage` | 60 altın | Kasiyer günlük ücreti |
+| `teslimatci_daily_wage` | 100 altın | Teslimatçı günlük ücreti |
+| `hire_cost_multiplier` | 10 | `hire_cost = daily_wage × multiplier × level` |
+| `hamurcu_effect_per_level` | 0.25 | Hamur hızı artışı per seviye |
+| `firinci_effect_per_level` | 0.20 | Pişirme hızı artışı per seviye |
+| `kasiyer_effect_per_level` | 0.30 | Satış hızı artışı per seviye |
+| `teslimatci_capacity_per_level` | 1 | Teslimat kapasitesi artışı per seviye |
+| `max_employee_level` | 3 | Tüm çalışan tipleri için max seviye |
 
 ## 8. Acceptance Criteria
 <!-- TBD -->
