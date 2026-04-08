@@ -95,7 +95,16 @@ effect = UpgradeData.effect_per_level[current_level - 1]
 | Otomatik Hamur upgrade'i max'ken oyuncu manuel yoğurursa | Her ikisi paralel çalışır; manuel yoğurma %3 hız bonusu ayrıca uygulanır |
 
 ## 6. Dependencies
-<!-- TBD -->
+
+| Sistem | Kullanım |
+|--------|----------|
+| **Economy System** (#4) | Altın ve Rozet ödeme işlemi; bakiye kontrolü |
+| **Content Database** (#2) | `UpgradeData` Resource'larının okunması |
+| **Save/Load System** (#5) | Her upgrade'in `current_level` kaydedilmesi ve yüklenmesi |
+| **Customer/Order System** (#11) | `CustomerConfig` Resource aracılığıyla müşteri upgrade efektleri iletilir |
+| **Oven/Baking System** (#9) | `ProductionConfig` Resource aracılığıyla üretim upgrade efektleri iletilir |
+| **Delivery System** (#27) *(alpha)* | `DeliveryConfig` Resource aracılığıyla teslimat upgrade efektleri iletilir |
+| **Visual Progression System** (#20) *(vertical slice)* | Upgrade seviyesi değişince fırın görseli güncellenir |
 
 ## 7. Tuning Knobs
 <!-- TBD -->
