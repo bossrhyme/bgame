@@ -83,7 +83,16 @@ effect = UpgradeData.effect_per_level[current_level - 1]
 Örnek — Fırın Sıcaklığı Sev.3: `effect_per_level[2] = 0.50` → pişirme hızı +%50
 
 ## 5. Edge Cases
-<!-- TBD -->
+
+| Durum | Davranış |
+|-------|----------|
+| Satın alma sırasında altın yetersiz kalırsa | İşlem engellenir, Economy düşürme yapılmaz, hata tostu gösterilir |
+| Aynı upgrade'e aynı anda iki kez tap edilirse | İkinci tap işlemi yoksayılır (`is_purchasing = true` kilidi) |
+| Tüm upgrade'ler max seviyede | Upgrade menüsü "Tüm iyileştirmeler tamamlandı" mesajı gösterir; yeni lokasyon/prestige önerilir |
+| Yükleme sırasında `current_level > max_level` kayıt varsa | Hata loglanır, `current_level` `max_level`'a sabitlenir; oyun çökmez |
+| VIP Lounge Rozet ile alındıktan sonra Rozet iadesi istenir | İade desteklenmez; satın alma öncesi onay ekranı gösterilir |
+| Upgrade efekti kayıt dosyasında bozuksa | Yükleme sırasında `current_level = 0` kabul edilir, efektler sıfır seviyeden hesaplanır |
+| Otomatik Hamur upgrade'i max'ken oyuncu manuel yoğurursa | Her ikisi paralel çalışır; manuel yoğurma %3 hız bonusu ayrıca uygulanır |
 
 ## 6. Dependencies
 <!-- TBD -->
