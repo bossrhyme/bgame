@@ -82,7 +82,16 @@ daily_cost = sum(active_employee.daily_wage for each active employee)
 Time Tracking günlük sıfırlamasında Economy'den toplam `daily_cost` düşülür.
 
 ## 5. Edge Cases
-<!-- TBD -->
+
+| Durum | Davranış |
+|-------|----------|
+| Günlük ücret ödenemez (yetersiz altın) | Tüm çalışanlar greve çıkar; efektler sıfırlanır; UI uyarı gösterir |
+| Birden fazla çalışan aynı anda grevdeyken altın yeterse | "Maaş Öde" butonu tüm grevdeki çalışanları tek seferde çözer |
+| Oyun arka plandayken gün geçer, ücret ödenemez | Geri dönüşte grev bildirimi gösterilir; oyuncu kasayı kontrol etmeye yönlendirilir |
+| Teslimatçı işe alınmış ama Delivery System henüz aktif değil | Teslimatçı görsel olarak "hazır" durumda bekler; efekt Delivery System aktif olunca başlar |
+| Max seviyedeki çalışanı yükseltmeye çalışırsa | Buton "Maksimum" görünümüne geçer, işlem engellenir |
+| Aynı tipten iki çalışan işe alınabilir mi? | Hayır — her tipten yalnızca bir çalışan aktif olabilir; yükseltme ile seviye artırılır |
+| Çalışan işten çıkarılabilir mi? | Evet — işten çıkarma anında efekt durur, günlük ücret kesilmez; işe alma maliyeti iade edilmez |
 
 ## 6. Dependencies
 <!-- TBD -->
