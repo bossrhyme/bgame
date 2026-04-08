@@ -2,7 +2,7 @@
 
 **Sistem:** #13 / 29
 **Kategori:** Gameplay — MVP
-**Durum:** Draft
+**Durum:** Designed
 **Bağımlılıklar:** Economy System, Time Tracking System
 
 ---
@@ -120,4 +120,13 @@ Time Tracking günlük sıfırlamasında Economy'den toplam `daily_cost` düşü
 | `max_employee_level` | 3 | Tüm çalışan tipleri için max seviye |
 
 ## 8. Acceptance Criteria
-<!-- TBD -->
+
+- [ ] 4 çalışan tipi işe alınabiliyor; efektler anında aktif oluyor
+- [ ] `hire_cost(level) = daily_wage × 10 × level` formülü doğru hesaplanıyor
+- [ ] Günlük ücret Time Tracking sıfırlamasında Economy'den otomatik düşülüyor
+- [ ] Yetersiz altında tüm çalışanlar greve çıkıyor; efektler sıfırlanıyor
+- [ ] "Maaş Öde" ile grev çözüldüğünde efektler yeniden aktif oluyor
+- [ ] Her tipten yalnızca bir çalışan aktif olabiliyor; ikinci işe alma engelleniyor
+- [ ] Çalışan işten çıkarılınca efekt duruyor, günlük ücret bir sonraki günden kesilmiyor
+- [ ] Save/Load: çalışan seviyeleri ve grev durumları kaydedilip yüklenince doğru çalışıyor
+- [ ] GUT testleri: hire_cost formülü, günlük kesinti toplamı, grev tetikleme ve çözme
