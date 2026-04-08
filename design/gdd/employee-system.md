@@ -20,7 +20,35 @@ Employee System, oyuncunun günlük ücret karşılığında işe aldığı çal
 **Kaçınılması gereken:** Çalışan grevinin oyunu bloke etmesi. Grev bir uyarı olmalı, ceza değil — oyuncu maaşı ödeyince her şey normale döner.
 
 ## 3. Detailed Rules
-<!-- TBD -->
+
+### Çalışan Tipleri
+
+| Tip | Görevi | Günlük Ücret | Efekt | Max Seviye |
+|-----|--------|-------------|-------|-----------|
+| Hamurcu Yardımcısı | Hamur yoğurmayı otomatize eder | 50 altın | Hız +%25/sev. | 3 |
+| Fırın Ustası | Pişirme hızını artırır | 80 altın | Hız +%20/sev. | 3 |
+| Kasiyer | Satış animasyonunu atlar | 60 altın | Satış hızı +%30/sev. | 3 |
+| Teslimatçı | Teslimat siparişlerini yönetir | 100 altın | Kapasite +1/sev. | 3 |
+
+### İşe Alma Akışı
+
+1. Oyuncu çalışan menüsünü açar
+2. Tip ve seviye seçer, günlük maaş gösterilir
+3. İşe al → çalışan aktif, efekt anında başlar
+4. Ücret her gün (Time Tracking günlük sıfırlamasında) Economy'den otomatik düşer
+
+### Grev Mekanizması
+
+- Günlük ücret ödenemezse (yetersiz altın) → çalışan "greve çıkar"
+- Grev durumunda efekt sıfırlanır; çalışan görsel olarak "pasif" konuma geçer
+- Oyuncu yeterli altın biriktirip "Maaş Öde" butonuna basınca grev biter, efekt yeniden aktif olur
+- Grev süresince çalışan işten çıkmaz; sadece efekt askıya alınır
+
+### Seviye Yükseltme
+
+- Her çalışanın max 3 seviyesi vardır
+- Seviye yükseltme maliyeti: işe alma maliyeti ile aynı formülü kullanır
+- Yükseltme anında efekt güncellenir
 
 ## 4. Formulas
 <!-- TBD -->
