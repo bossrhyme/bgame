@@ -122,7 +122,16 @@ effect = UpgradeData.effect_per_level[current_level - 1]
 | `purchase_lock_timeout` | 0.5 sn | Çift tap koruması için kilit süresi |
 
 ## 8. Acceptance Criteria
-<!-- TBD -->
+
+- [ ] `cost(level) = base_cost × 3^(level-1)` formülü tüm upgrade'lerde doğru hesaplanıyor
+- [ ] Yeterli altın yokken satın alma engelleniyor; Economy bakiyesi değişmiyor
+- [ ] Upgrade satın alındığında efekt anında aktif oluyor (pişirme hızı, kapasite vs.)
+- [ ] Max seviyede buton "Maksimum" görünümüne geçiyor, yeni satın alma yapılamıyor
+- [ ] VIP Lounge Rozet ile satın alınıyor; altın ile satın alınamıyor
+- [ ] `CustomerConfig` Resource upgrade sonrası doğru değerleri taşıyor (`patience_multiplier`, `max_active_orders`, `vip_spawn_rate`, `repeat_customer_gold_bonus`)
+- [ ] Save/Load: upgrade seviyeleri kaydedilip yüklenince efektler doğru hesaplanıyor
+- [ ] Yükleme sırasında bozuk `current_level` → `max_level`'a sabitlenip oyun çökmeden devam ediyor
+- [ ] GUT testleri: maliyet formülü, efekt hesabı, çift tap kilidi, sınır değerleri (level=1, level=max)
 
 ---
 
