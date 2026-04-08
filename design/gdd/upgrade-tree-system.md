@@ -21,7 +21,34 @@ Upgrade Tree System, oyuncunun altın ve Unlu Rozet harcayarak fırınını üç
 **Kaçınılması gereken:** "Hangi upgrade daha iyi?" belirsizliği. Her upgrade'in etkisi satın alma öncesi açıkça gösterilmeli.
 
 ## 3. Detailed Rules
-<!-- TBD -->
+
+### Satın Alma Akışı
+
+1. Oyuncu upgrade menüsünü açar
+2. Mevcut seviye, bir sonraki seviyenin etkisi ve maliyeti gösterilir
+3. Yeterli altın/Rozet varsa "Satın Al" butonu aktif
+4. Onay → Economy'den ödeme düşülür → `current_level` +1 → efekt anında aktif
+5. Max seviyeye ulaşınca buton "Maksimum" olarak değişir, tıklanamaz
+
+### Upgrade Kategorileri
+
+| Kategori | Para Birimi | Kapsam |
+|----------|------------|--------|
+| Üretim | Altın | Pişirme hızı, fırın kapasitesi, hamur otomasyonu, depo |
+| Müşteri | Altın + Rozet | Sipariş slotu, sabır, VIP oranı, gelir bonusu |
+| Teslimat | Altın | Teslimat kapasitesi ve hızı |
+
+### Efekt Uygulama
+
+- Her kategori için bir `UpgradeConfig` Resource tutulur
+- Upgrade satın alındığında ilgili Resource güncellenir
+- Bağlı sistemler bu Resource'u okur (polling değil; sinyal ile bildirim)
+- `customer_upgrades_changed` sinyali → CustomerManager Resource'u yeniler
+
+### Kayıt/Yükleme
+
+- Her upgrade'in `current_level: int` değeri Save/Load System'e kaydedilir
+- Yükleme sırasında tüm `UpgradeConfig` Resource'ları mevcut seviyelere göre yeniden hesaplanır
 
 ## 4. Formulas
 <!-- TBD -->
