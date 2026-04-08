@@ -9,7 +9,8 @@
 ---
 
 ## 1. Overview
-<!-- TBD -->
+
+Upgrade Tree System, oyuncunun altın ve Unlu Rozet harcayarak fırınını üç kategoride geliştirdiği progression katmanıdır: **Üretim** (pişirme hızı, kapasite, otomasyon), **Müşteri** (sipariş slotu, sabır, VIP oranı) ve **Teslimat** (sipariş kapasitesi, hız). Her upgrade 1–5 seviyeye sahiptir; maliyet `base_cost × 3^(level-1)` formülüyle üstel olarak artar. Tüm upgrade verileri `UpgradeData` Resource olarak Content Database'de tanımlanır; sistem bu verileri okur, satın alma akışını yönetir, efektleri ilgili sistemlere `UpgradeConfig` Resource'ları aracılığıyla iletir ve durumu Save/Load'a kaydeder.
 
 ## 2. Player Fantasy
 <!-- TBD -->
