@@ -107,7 +107,19 @@ effect = UpgradeData.effect_per_level[current_level - 1]
 | **Visual Progression System** (#20) *(vertical slice)* | Upgrade seviyesi değişince fırın görseli güncellenir |
 
 ## 7. Tuning Knobs
-<!-- TBD -->
+
+| Parametre | Varsayılan | Açıklama |
+|-----------|-----------|----------|
+| `upgrade_cost_exponent` | 3.0 | Maliyet formülündeki üs; düşük → erken maxlanır |
+| `production_speed_per_level` | [0.10, 0.25, 0.50, 0.80, 1.20] | Fırın Sıcaklığı etkileri |
+| `income_bonus_per_level` | [0.05, 0.15, 0.30, 0.50, 0.80] | Hamur Kalitesi etkileri |
+| `oven_capacity_per_level` | [1, 2, 4, 6, 10] | Fırın Kapasitesi ek slot |
+| `customer_slot_per_level` | [2, 2, 2] | Vitrin Genişliği ek sipariş slotu |
+| `patience_bonus_per_level` | [0.20, 0.20, 0.20] | Müşteri Memnuniyeti sabır çarpanı artışı |
+| `vip_rate_bonus` | 0.50 | VIP Lounge tek seviye etkisi (+%50) |
+| `repeat_gold_bonus` | 0.30 | Sadakat Kartı tek seviye etkisi (+%30) |
+| `manual_knead_bonus` | 0.03 | Otomatik hamur aktifken manuel yoğurma bonusu |
+| `purchase_lock_timeout` | 0.5 sn | Çift tap koruması için kilit süresi |
 
 ## 8. Acceptance Criteria
 <!-- TBD -->
