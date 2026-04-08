@@ -1,6 +1,6 @@
 # Recipe System
 
-> **Status**: In Design
+> **Status**: Designed
 > **Author**: User + Claude Code agents
 > **Last Updated**: 2026-04-04
 > **Implements Pillar**: Progression — "Her yeni tarif bir keşif, her yeni şehir bir gurur"
@@ -27,7 +27,7 @@ yapabilirim" düşüncesi kapıyı açar. Recipe System, oyuncunun "daha fazlas�
 tutar; her yeni lokasyon beraberinde yeni tarifler getirir, her yeni tarif yeni bir gurur
 noktası olur.
 
-## Detailed Design
+## Detailed Rules
 
 ### Core Rules
 
