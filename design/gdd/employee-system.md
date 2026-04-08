@@ -8,7 +8,8 @@
 ---
 
 ## 1. Overview
-<!-- TBD -->
+
+Employee System, oyuncunun günlük ücret karşılığında işe aldığı çalışanların fırın operasyonlarını kısmen otomatize ettiği sistemdir. Dört çalışan tipi vardır: **Hamurcu Yardımcısı** (hamur yoğurmayı otomatize eder), **Fırın Ustası** (pişirme hızını artırır), **Kasiyer** (satış işlemlerini hızlandırır) ve **Teslimatçı** (teslimat siparişlerini yönetir). Her çalışan günlük altın ücret alır; ödeme yapılamazsa çalışan "greve çıkar" ve efekti devre dışı kalır. Çalışan ücretleri Economy System üzerinden günlük otomatik düşülür; Time Tracking System günlük sıfırlamayı tetikler.
 
 ## 2. Player Fantasy
 <!-- TBD -->
