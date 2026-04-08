@@ -51,7 +51,36 @@ Upgrade Tree System, oyuncunun altın ve Unlu Rozet harcayarak fırınını üç
 - Yükleme sırasında tüm `UpgradeConfig` Resource'ları mevcut seviyelere göre yeniden hesaplanır
 
 ## 4. Formulas
-<!-- TBD -->
+
+### Upgrade Maliyeti
+
+```
+cost(level) = base_cost × 3^(level - 1)
+```
+
+| Upgrade | base_cost | Sev.1 | Sev.2 | Sev.3 | Sev.4 | Sev.5 |
+|---------|-----------|-------|-------|-------|-------|-------|
+| Fırın Sıcaklığı | 50 | 50 | 150 | 450 | 1.000 | 3.000 |
+| Hamur Kalitesi | 100 | 100 | 300 | 900 | 2.500 | 7.000 |
+| Fırın Kapasitesi | 75 | 75 | 225 | 675 | 2.000 | 6.000 |
+| Otomatik Hamur | 500 | 500 | 1.500 | 5.000 | — | — |
+| Malzeme Deposu | 80 | 80 | 250 | 700 | 2.000 | — |
+| Vitrin Genişliği | 200 | 200 | 600 | 1.500 | — | — |
+| Müşteri Memnuniyeti | 300 | 300 | 900 | 2.500 | — | — |
+| Sadakat Kartı | 2.000 | 2.000 | — | — | — | — |
+
+**Rozet ile alınan upgrade:**
+```
+VIP Lounge: 1.000 Rozet (tek seviye)
+```
+
+### Efekt Hesabı
+
+```
+effect = UpgradeData.effect_per_level[current_level - 1]
+```
+
+Örnek — Fırın Sıcaklığı Sev.3: `effect_per_level[2] = 0.50` → pişirme hızı +%50
 
 ## 5. Edge Cases
 <!-- TBD -->
