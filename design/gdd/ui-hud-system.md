@@ -54,7 +54,28 @@ UI/HUD System, oyuncunun tüm oyun durumunu tek bakışta okuyabildiği ekran ka
 - Öncelik sırası: grev uyarısı > yeni tarif > memnuniyet düşüşü > genel bilgi
 
 ## 4. Formulas
-<!-- TBD -->
+
+UI sistemi matematiksel formül içermez. Animasyon parametreleri:
+
+### Sayaç Animasyonu
+
+```
+# Altın/Rozet değeri değiştiğinde:
+display_value → target_value (0.3 sn, ease_out)
+```
+
+### Sabır Progress Bar
+
+```
+fill_ratio = remaining_patience / total_patience
+# Grace süresinde fill_ratio kırmızıya döner (threshold: 0.0)
+```
+
+### Toast Yaşam Döngüsü
+
+```
+slide_in: 0.2 sn → görünür: 3.0 sn → fade_out: 0.3 sn
+```
 
 ## 5. Edge Cases
 <!-- TBD -->
