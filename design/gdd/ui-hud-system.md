@@ -20,7 +20,38 @@ UI/HUD System, oyuncunun tüm oyun durumunu tek bakışta okuyabildiği ekran ka
 **Kaçınılması gereken:** Bilgi kirliliği. HUD, oyunun önüne geçmemelidir; fırın animasyonları ve müşteri hareketleri görünür kalmalıdır.
 
 ## 3. Detailed Rules
-<!-- TBD -->
+
+### CanvasLayer Mimarisi
+
+| Katman | CanvasLayer | İçerik |
+|--------|------------|--------|
+| HUD | 1 | Kaynak çubuğu, sipariş panosu, hızlı erişim menüsü |
+| VFX | 2 | Para animasyonu, unlock efektleri |
+| Notification | 3 | Toast mesajları, uyarı banner'ları |
+| Debug | 4 | Yalnızca geliştirme modunda görünür |
+
+### Kaynak Çubuğu
+
+- Sol üst köşe: Altın ikonu + animasyonlu sayaç
+- Sağ üst köşe: Rozet ikonu + sayaç
+- Değer değiştiğinde sayaç 0.3 sn'de animasyonlu artar/azalır
+
+### Sipariş Panosu
+
+- Alt bölge: 4 kart yatay dizilir
+- Her kart: tarif ikonu, müşteri tipi göstergesi, sabır progress bar
+- VIP kartı: altın çerçeve + hafif titreşim efekti
+- Boş slot: soluk "+" ikonu
+
+### Hızlı Erişim Menüsü
+
+- Sağ kenar: dikey 3 buton (Upgrade, Çalışan, Koleksiyon)
+- Buton üzerinde badge: okunmamış bildirim sayısı
+
+### Bildirim Katmanı
+
+- Toast: ekran üstünden kayar, 3 sn görünür, otomatik kaybolur
+- Öncelik sırası: grev uyarısı > yeni tarif > memnuniyet düşüşü > genel bilgi
 
 ## 4. Formulas
 <!-- TBD -->
