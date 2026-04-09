@@ -112,11 +112,15 @@ func set_notif_promo(value: bool) -> void:
 
 # ── Public API — Performans ───────────────────────────────────────────────────
 
+## Pil tasarrufu modu değiştiğinde yayılır. AnimationManager dinler.
+signal battery_saver_changed(enabled: bool)
+
 ## Pil tasarrufu modunu açar/kapatır. Engine.max_fps anında değişir.
 func set_battery_saver(value: bool) -> void:
 	battery_saver = value
 	_apply_performance()
 	_save_settings()
+	battery_saver_changed.emit(value)
 
 
 ## Dokunsal geri bildirimi açar/kapatır.
