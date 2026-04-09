@@ -2,7 +2,7 @@
 
 **Sistem:** #15 / 29
 **Kategori:** UI — MVP
-**Durum:** Draft
+**Durum:** Designed
 **Bağımlılıklar:** Economy System, Customer/Order System, Upgrade Tree System
 
 ---
@@ -111,4 +111,14 @@ slide_in: 0.2 sn → görünür: 3.0 sn → fade_out: 0.3 sn
 | `vip_card_pulse_speed` | 1.0 sn | VIP kart titreşim döngüsü |
 
 ## 8. Acceptance Criteria
-<!-- TBD -->
+
+- [ ] Kaynak çubuğu altın/Rozet değişiminde 0.3 sn animasyonlu güncellenir
+- [ ] Sipariş panosu max 4 kart gösterir; 5. kart oluşturulmaz
+- [ ] VIP kartı altın çerçeve + titreşim efektiyle ayrışır
+- [ ] Sabır barı grace süresinde kırmızıya döner
+- [ ] Toast bildirimi 3 sn görünür kalıp otomatik kaybolur
+- [ ] Aynı anda birden fazla toast gelirse öncelik sırasına göre kuyruklanır; max 3
+- [ ] Hızlı erişim butonlarında badge okunmamış bildirim sayısını gösterir
+- [ ] Oyun arka plandan dönüldüğünde sabır barları gerçek değerle yeniden çizilir
+- [ ] 4 CanvasLayer limiti aşılmaz; Debug katmanı yalnızca geliştirme modunda görünür
+- [ ] Tüm UI bileşenleri sinyal tabanlı çalışır; oyun verisine doğrudan erişmez
