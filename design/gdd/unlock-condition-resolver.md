@@ -20,7 +20,32 @@ Unlock/Condition Resolver, oyundaki tüm kilit açma koşullarını merkezi olar
 **Kaçınılması gereken:** Koşul değerlendirmesinin farklı sistemlere dağılması. Her sistem kendi unlock mantığını yazarsa tutarsızlık ve test güçlüğü kaçınılmaz olur.
 
 ## 3. Detailed Rules
-<!-- TBD -->
+
+### Koşul Tipleri
+
+| Tip | Açıklama | Gerekli Veri |
+|-----|----------|-------------|
+| `sale_count` | Belirli sayıda ekmek satılması | `target_category`, `required_count` |
+| `location_unlocked` | Belirli bir şehrin açılmış olması | `required_location_id` |
+| `ingredient_owned` | Belirli malzemeden en az 1 adet sahibi olunması | `required_ingredient_id` |
+
+### Değerlendirme Akışı
+
+1. İlgili sistem (Recipe, Location, vb.) `evaluate(condition)` çağırır
+2. Resolver koşul tipine göre ilgili sistemi sorgular
+3. Koşul sağlandıysa `true` döner → çağıran sistem `LOCKED → AVAILABLE` geçişini yapar
+4. Resolver sinyal yayımlamaz; sadece bool döndürür — bildirim çağıran sistemin sorumluluğundadır
+
+### AND Mantığı
+
+- Bir içerik birden fazla koşul içeriyorsa tüm koşulların `true` olması gerekir
+- `evaluate_all(conditions: Array[UnlockCondition]) → bool`
+
+### Tetikleme Zamanlaması
+
+- `sale_count`: Her satış sonrası ilgili tarifler için evaluate çağrılır
+- `location_unlocked`: Lokasyon açılış sinyalinde ilgili tarifler için evaluate çağrılır
+- `ingredient_owned`: Malzeme envantere girdiğinde ilgili tarifler için evaluate çağrılır
 
 ## 4. Formulas
 <!-- TBD -->
