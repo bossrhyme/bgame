@@ -90,10 +90,25 @@ slide_in: 0.2 sn → görünür: 3.0 sn → fade_out: 0.3 sn
 | Rozet sayacı 0'ın altına düşmeye çalışırsa | Economy engeller; UI 0 gösterir, negatife düşmez |
 
 ## 6. Dependencies
-<!-- TBD -->
+
+| Sistem | Kullanım |
+|--------|----------|
+| **Economy System** (#4) | Altın/Rozet bakiye sinyalleri → sayaç güncelleme |
+| **Customer/Order System** (#11) | Sipariş ekleme/kaldırma, sabır değeri → kart güncelleme |
+| **Upgrade Tree System** (#12) | Upgrade satın alımı → badge temizleme |
+| **Time Tracking System** (#1) | Geri dönüşte sabır barlarının yeniden hesaplanması |
+| **Animation State Machine** (#6) | Para animasyonu ve unlock efektleri için sinyal |
 
 ## 7. Tuning Knobs
-<!-- TBD -->
+
+| Parametre | Varsayılan | Açıklama |
+|-----------|-----------|----------|
+| `counter_anim_duration` | 0.3 sn | Altın/Rozet sayaç animasyon süresi |
+| `toast_visible_duration` | 3.0 sn | Toast görünür kalma süresi |
+| `toast_slide_duration` | 0.2 sn | Toast giriş/çıkış animasyon süresi |
+| `toast_queue_max` | 3 | Eş zamanlı max toast kuyruğu |
+| `grace_bar_color` | Kırmızı | Sabır barı grace süresinde rengi |
+| `vip_card_pulse_speed` | 1.0 sn | VIP kart titreşim döngüsü |
 
 ## 8. Acceptance Criteria
 <!-- TBD -->
