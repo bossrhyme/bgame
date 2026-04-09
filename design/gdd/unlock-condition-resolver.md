@@ -82,10 +82,17 @@ evaluate_all(conditions) → bool:
 | Aynı tarif için birden fazla evaluate aynı frame'de tetiklenirse | İlk `true` sonucunda işlem yapılır, sonrakiler yoksayılır |
 
 ## 6. Dependencies
-<!-- TBD -->
+
+| Sistem | Kullanım |
+|--------|----------|
+| **Recipe System** (#10) | `UnlockCondition` verisini sağlar; koşul sağlanınca `LOCKED → AVAILABLE` geçişini yapar |
+| **Location/Prestige System** (#17) | `location_unlocked` koşulu için `is_unlocked()` sorgusu |
+| **Economy System** (#4) *(dolaylı)* | `sale_count` için satış sayacı Economy üzerinden takip edilir |
+| **Save/Load System** (#5) | Satış sayacı ve malzeme envanteri kayıt/yükleme için bağımlı sistemlerden alınır |
 
 ## 7. Tuning Knobs
-<!-- TBD -->
+
+> Bu sistem parametre içermez — boolean değerlendirme yapar. Koşul eşik değerleri (`required_count`, vb.) `RecipeData` Resource'larında tanımlanır; Resolver bunları okur, değiştirmez.
 
 ## 8. Acceptance Criteria
 <!-- TBD -->
