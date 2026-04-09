@@ -48,7 +48,26 @@ Unlock/Condition Resolver, oyundaki tüm kilit açma koşullarını merkezi olar
 - `ingredient_owned`: Malzeme envantere girdiğinde ilgili tarifler için evaluate çağrılır
 
 ## 4. Formulas
-<!-- TBD -->
+
+Bu sistem matematiksel formül içermez — boolean mantık kullanır.
+
+### Tekil Koşul
+
+```
+evaluate(condition) → bool:
+  match condition.type:
+    "sale_count"        → SaleTracker.get_count(condition.target_category) >= condition.required_count
+    "location_unlocked" → LocationSystem.is_unlocked(condition.required_location_id)
+    "ingredient_owned"  → Inventory.get_count(condition.required_ingredient_id) >= 1
+    _                   → false  # bilinmeyen tip → güvenli varsayılan
+```
+
+### Çoklu Koşul (AND)
+
+```
+evaluate_all(conditions) → bool:
+  return conditions.all(func(c): evaluate(c))
+```
 
 ## 5. Edge Cases
 <!-- TBD -->
