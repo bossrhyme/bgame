@@ -70,7 +70,16 @@ evaluate_all(conditions) → bool:
 ```
 
 ## 5. Edge Cases
-<!-- TBD -->
+
+| Durum | Davranış |
+|-------|----------|
+| Bilinmeyen koşul tipi | `evaluate()` `false` döner + hata loglanır; oyun çökmez |
+| `target_category` boş string (`""`) ile `sale_count` | Tüm kategorilerdeki satışlar toplanır |
+| Koşul birden fazla kez sağlanırsa | `AVAILABLE` durumu değişmez; duplicate tetikleme yoksayılır |
+| Lokasyon sistemi henüz başlatılmamışken evaluate çağrılırsa | `false` döner + uyarı logu; sistem hazır olunca tekrar değerlendirilir |
+| Malzeme envanteri sistemi yokken `ingredient_owned` değerlendirilirse | `false` döner + hata logu |
+| Tüm koşullar boş array ile `evaluate_all` çağrılırsa | `true` döner (boş AND = her zaman doğru) |
+| Aynı tarif için birden fazla evaluate aynı frame'de tetiklenirse | İlk `true` sonucunda işlem yapılır, sonrakiler yoksayılır |
 
 ## 6. Dependencies
 <!-- TBD -->
