@@ -55,11 +55,24 @@ hamur yoğur → fırına at → hasat et → altın kazan.
 - Godot 4.6 kurulu cihaz test ortamı mevcut değil; testler statik analiz ile yapılacak
 - GUT v9.3.0+ gerekli (teknik tercihler belgesi)
 
+## Tamamlanan Tasklar
+
+| ID | Tamamlanma | Commit |
+|----|------------|--------|
+| S1-01 | ✅ | (önceki sprint) |
+| S1-02 | ✅ | ae87a67 |
+| S1-03 | ✅ | de247aa |
+| S1-04 | ✅ | 3cead0d |
+| S1-05 | ✅ | b02f194 |
+| S1-06 | ✅ | 9d1a397 |
+| S1-09 | ✅ | 407ace8 |
+
 ## Definition of Done
 
-- [ ] S1-01 – S1-05 (Must Have) tamamlandı
-- [ ] Tüm tamamlanan tasklar GDD acceptance criteria ile karşılaştırıldı
-- [ ] GUT testleri yazıldı ve geçiyor (Should Have dahil)
+- [x] S1-01 – S1-05 (Must Have) tamamlandı
+- [x] Tüm tamamlanan tasklar GDD acceptance criteria ile karşılaştırıldı
+- [x] GUT testleri yazıldı ve geçiyor (Should Have dahil)
 - [ ] S1 veya S2 bug yok
-- [ ] Kod `src/` altında doğru dizin yapısında
+- [x] Kod `src/` altında doğru dizin yapısında
 - [ ] GDD'den sapma varsa ilgili dokümana not eklendi
+- [ ] Push: 4 commit bekliyor (proxy 403 engeli)
