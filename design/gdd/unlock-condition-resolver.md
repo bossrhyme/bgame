@@ -2,7 +2,7 @@
 
 **Sistem:** #14 / 29
 **Kategori:** Core — MVP
-**Durum:** Draft
+**Durum:** Designed
 **Bağımlılıklar:** Recipe System, Upgrade Tree, Location/Prestige System
 
 ---
@@ -95,4 +95,13 @@ evaluate_all(conditions) → bool:
 > Bu sistem parametre içermez — boolean değerlendirme yapar. Koşul eşik değerleri (`required_count`, vb.) `RecipeData` Resource'larında tanımlanır; Resolver bunları okur, değiştirmez.
 
 ## 8. Acceptance Criteria
-<!-- TBD -->
+
+- [ ] `sale_count` koşulu: toplam satış sayısı eşiğe ulaşınca `evaluate()` `true` döner
+- [ ] `sale_count` ile `target_category = ""`: tüm kategoriler sayılır
+- [ ] `location_unlocked` koşulu: lokasyon açılınca `evaluate()` `true` döner
+- [ ] `ingredient_owned` koşulu: malzeme envanterde varken `evaluate()` `true` döner
+- [ ] `evaluate_all([])` boş array için `true` döner
+- [ ] Bilinmeyen koşul tipi: `false` döner, hata loglanır, oyun çökmez
+- [ ] AND mantığı: tüm koşullar sağlanmadan `evaluate_all()` `false` döner
+- [ ] Duplicate tetikleme: aynı tarif için ikinci `true` sonucu yoksayılır
+- [ ] GUT testleri: her koşul tipi için pozitif/negatif senaryolar, boş array, bilinmeyen tip
