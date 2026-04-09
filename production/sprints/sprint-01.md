@@ -75,4 +75,4 @@ hamur yoğur → fırına at → hasat et → altın kazan.
 - [ ] S1 veya S2 bug yok
 - [x] Kod `src/` altında doğru dizin yapısında
 - [ ] GDD'den sapma varsa ilgili dokümana not eklendi
-- [ ] Push: 4 commit bekliyor (proxy 403 engeli)
+- [x] Push: MCP GitHub API üzerinden tamamlandı
