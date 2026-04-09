@@ -78,7 +78,16 @@ slide_in: 0.2 sn → görünür: 3.0 sn → fade_out: 0.3 sn
 ```
 
 ## 5. Edge Cases
-<!-- TBD -->
+
+| Durum | Davranış |
+|-------|----------|
+| 4 sipariş kartı doluyken yeni sipariş gelirse | 5. kart oluşturulmaz; pano max 4 kartla sabit kalır |
+| Aynı anda birden fazla toast tetiklenirse | Kuyruk sistemi: öncelik sırasına göre birer birer gösterilir |
+| Altın hızla artıp azalırsa (çoklu işlem) | Sayaç animasyonu son hedef değere atlar; aradaki değerleri atlar |
+| VIP ve normal sipariş aynı anda gelirse | VIP kartı soldan ilk konuma yerleşir; diğerleri sağa kayar |
+| Bildirim katmanı çok sayıda toast biriktirirse | Max 3 toast kuyruğu; fazlası düşürülür, log'a yazılır |
+| Oyun arka plana alınıp dönüldüğünde sabır barları güncellenirse | Geri dönüşte tüm kartlar Time Tracking'den alınan gerçek değerle yeniden çizilir |
+| Rozet sayacı 0'ın altına düşmeye çalışırsa | Economy engeller; UI 0 gösterir, negatife düşmez |
 
 ## 6. Dependencies
 <!-- TBD -->
