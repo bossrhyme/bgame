@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RecipeData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/core/resources/recipe_data.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"white_bread"
+display_name = "Beyaz Ekmek"
+category = 0
+base_value = 10
+bake_time_seconds = 60.0
+location_id = &""
+animation_key = &"bread_white"
+sfx_bake_key = &"bake_generic"
+sfx_harvest_key = &"harvest_generic"
