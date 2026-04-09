@@ -86,6 +86,12 @@ func earn_rozet(amount: int) -> void:
 	rozet_changed.emit(_rozet)
 
 
+## Mevcut bakiyelerin kayıt snapshot'ını döner.
+## SaveLoadManager tarafından _save_game() sırasında çağrılır.
+func get_save_data() -> Dictionary:
+	return {"gold": _gold, "rozet": _rozet}
+
+
 ## Belirtilen miktarda Rozet harcamayı dener.
 ## Başarılıysa true + rozet_changed; yetersizse false + sinyal yok.
 ## amount <= 0 veya LOADING → false.
