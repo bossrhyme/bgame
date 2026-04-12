@@ -70,6 +70,7 @@ func set_music_volume(value: int) -> void:
 	music_volume = clampi(value, 0, 100)
 	_apply_audio()
 	_save_settings()
+	audio_changed.emit(music_volume, sfx_volume, ambient_volume, master_mute)
 
 
 ## SFX slider değerini ayarlar (0–100).
@@ -77,6 +78,7 @@ func set_sfx_volume(value: int) -> void:
 	sfx_volume = clampi(value, 0, 100)
 	_apply_audio()
 	_save_settings()
+	audio_changed.emit(music_volume, sfx_volume, ambient_volume, master_mute)
 
 
 ## Ambient slider değerini ayarlar (0–100).
@@ -84,6 +86,7 @@ func set_ambient_volume(value: int) -> void:
 	ambient_volume = clampi(value, 0, 100)
 	_apply_audio()
 	_save_settings()
+	audio_changed.emit(music_volume, sfx_volume, ambient_volume, master_mute)
 
 
 ## Master mute açar/kapatır. Slider değerleri korunur.
@@ -91,6 +94,7 @@ func set_master_mute(value: bool) -> void:
 	master_mute = value
 	_apply_audio()
 	_save_settings()
+	audio_changed.emit(music_volume, sfx_volume, ambient_volume, master_mute)
 
 
 # ── Public API — Bildirimler ──────────────────────────────────────────────────
@@ -111,6 +115,9 @@ func set_notif_promo(value: bool) -> void:
 
 
 # ── Public API — Performans ───────────────────────────────────────────────────
+
+## Ses ayarları değiştiğinde yayılır. AudioManager dinler.
+signal audio_changed(music: int, sfx: int, ambient: int, mute: bool)
 
 ## Pil tasarrufu modu değiştiğinde yayılır. AnimationManager dinler.
 signal battery_saver_changed(enabled: bool)
