@@ -81,5 +81,5 @@ Sprint 1 gerçekleşen: 9 task / oturum. Sprint 2 tahminleri bu baza göre yapı
 - [x] GUT testleri yazıldı; 0 failure
 - [x] S1 veya S2 bug yok
 - [x] `SaveLoadManager` save_version 2'ye çıkarıldı (OvenManager entegrasyonuyla şema değişti)
-- [ ] Upgrade Tree 3^n maliyet formülü için sayısal simülasyon belgesi oluşturuldu
+- [x] Upgrade Tree 3^n maliyet formülü için sayısal simülasyon belgesi oluşturuldu (`docs/balance/upgrade-tree-cost-simulation.md`)
 - [x] Kod commit edildi ve push edildi
