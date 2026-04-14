@@ -13,7 +13,7 @@
 class_name SaveLoadManager
 extends Node
 
-const CURRENT_SAVE_VERSION: int = 1
+const CURRENT_SAVE_VERSION: int = 2
 const SAVE_DEBOUNCE_MS: int = 500
 
 enum State { UNINITIALIZED, LOADING, READY, SAVING }
@@ -30,6 +30,10 @@ var _save_tmp_path: String = "user://save_game.cfg.tmp"
 
 ## Dependency injection (test izolasyonu). null ise autoload'dan alınır.
 var _economy_ref: EconomySystem = null
+var _oven_ref: OvenManager = null
+var _upgrade_ref: UpgradeTree = null
+var _recipe_ref: RecipeManager = null
+var _customer_ref: CustomerOrderSystem = null
 
 ## Salt okunur state erişimi.
 var state: State:
@@ -70,6 +74,30 @@ func _get_economy() -> EconomySystem:
 	return get_node_or_null("/root/Economy") as EconomySystem
 
 
+func _get_oven() -> OvenManager:
+	if _oven_ref:
+		return _oven_ref
+	return get_node_or_null("/root/OvenManager") as OvenManager
+
+
+func _get_upgrade_tree() -> UpgradeTree:
+	if _upgrade_ref:
+		return _upgrade_ref
+	return get_node_or_null("/root/UpgradeTree") as UpgradeTree
+
+
+func _get_recipe_manager() -> RecipeManager:
+	if _recipe_ref:
+		return _recipe_ref
+	return get_node_or_null("/root/RecipeManager") as RecipeManager
+
+
+func _get_customer_system() -> CustomerOrderSystem:
+	if _customer_ref:
+		return _customer_ref
+	return get_node_or_null("/root/CustomerOrderSystem") as CustomerOrderSystem
+
+
 func _clean_stale_tmp() -> void:
 	if FileAccess.file_exists(_save_tmp_path):
 		var dir := DirAccess.open(_save_tmp_path.get_base_dir())
@@ -84,14 +112,14 @@ func _load_game() -> void:
 
 	if not FileAccess.file_exists(_save_path):
 		push_warning("SaveLoadManager: Kayıt dosyası yok — yeni oyun başlatılıyor")
-		_finish_load(gold, rozet)
+		_finish_load({"gold": gold, "rozet": rozet})
 		return
 
 	var config := ConfigFile.new()
 	var err: Error = config.load(_save_path)
 	if err != OK:
 		push_error("SaveLoadManager: Kayıt bozuk (%s) — varsayılanlar yükleniyor" % error_string(err))
-		_finish_load(gold, rozet)
+		_finish_load({"gold": gold, "rozet": rozet})
 		return
 
 	# Versiyon kontrolü ve migration
@@ -110,15 +138,55 @@ func _load_game() -> void:
 	# Time
 	last_seen_unix = config.get_value("time", "last_seen_unix", 0)
 
-	_finish_load(gold, rozet)
+	# Sistem verileri
+	var save_data := {
+		"gold": gold,
+		"rozet": rozet,
+		"oven_slots": config.get_value("gameplay", "oven_slots", []),
+		"upgrade_levels": config.get_value("progression", "upgrade_levels", {}),
+		"recipe_unlock_state": config.get_value("progression", "recipe_unlock_state", {}),
+		"ingredient_stock": config.get_value("progression", "ingredient_stock", {}),
+		"customer_state": config.get_value("gameplay", "customer_state", {}),
+	}
+	_finish_load(save_data)
 
 
-func _finish_load(gold: int, rozet: int) -> void:
+func _finish_load(data: Dictionary) -> void:
+	# Economy (önce yüklenmeli — diğer sistemler bakiyeye bağımlı olabilir)
 	var econ := _get_economy()
 	if econ:
-		econ.initialize(gold, rozet)
+		econ.initialize(data.get("gold", 0), data.get("rozet", 0))
 	else:
 		push_error("SaveLoadManager: Economy sistemi bulunamadı!")
+
+	# OvenManager — offline pişirme apply_offline() ile tamamlanır
+	var oven := _get_oven()
+	if oven:
+		var raw: Array = data.get("oven_slots", [])
+		var typed: Array[Dictionary] = []
+		for entry in raw:
+			typed.append(entry)
+		oven.initialize_from_save(typed)
+
+	# UpgradeTree — Config Resource'ları anında günceller
+	var upgrade_tree := _get_upgrade_tree()
+	if upgrade_tree:
+		upgrade_tree.deserialize({"levels": data.get("upgrade_levels", {})})
+
+	# RecipeManager — kilit durumu ve malzeme stoğu
+	var recipe_mgr := _get_recipe_manager()
+	if recipe_mgr:
+		recipe_mgr.deserialize({
+			"unlock_state": data.get("recipe_unlock_state", {}),
+			"ingredient_stock": data.get("ingredient_stock", {}),
+		})
+
+	# CustomerOrderSystem — aktif siparişler ve memnuniyet
+	var customer_sys := _get_customer_system()
+	if customer_sys:
+		customer_sys.deserialize(data.get("customer_state", {}))
+		customer_sys.update_order_states()  # Offline süre dolmuş siparişleri temizle
+
 	_state = State.READY
 
 
@@ -160,16 +228,30 @@ func _save_game_internal() -> void:
 	# Time — her kayıtta güncellenir (GDD Core Rule 9)
 	config.set_value("time", "last_seen_unix", now_unix)
 
-	# Progression — diğer sistemler implement edilince buraya eklenir
-	config.set_value("progression", "purchased_upgrades", [])
-	config.set_value("progression", "unlocked_recipes", [])
+	# Progression
+	var upgrade_tree := _get_upgrade_tree()
+	if upgrade_tree:
+		var ut_data := upgrade_tree.serialize()
+		config.set_value("progression", "upgrade_levels", ut_data.get("levels", {}))
+	else:
+		config.set_value("progression", "upgrade_levels", {})
 
-	# Gameplay — diğer sistemler implement edilince buraya eklenir
-	config.set_value("gameplay", "hired_employees", [])
-	config.set_value("gameplay", "unlocked_locations", [])
-	config.set_value("gameplay", "active_location", "bakery_1")
-	config.set_value("gameplay", "oven_state", {})
-	config.set_value("gameplay", "collection_progress", {})
+	var recipe_mgr := _get_recipe_manager()
+	if recipe_mgr:
+		var rm_data := recipe_mgr.serialize()
+		config.set_value("progression", "recipe_unlock_state", rm_data.get("unlock_state", {}))
+		config.set_value("progression", "ingredient_stock", rm_data.get("ingredient_stock", {}))
+	else:
+		config.set_value("progression", "recipe_unlock_state", {})
+		config.set_value("progression", "ingredient_stock", {})
+
+	# Gameplay
+	var oven := _get_oven()
+	config.set_value("gameplay", "oven_slots", oven.get_save_data() if oven else [])
+
+	var customer_sys := _get_customer_system()
+	config.set_value("gameplay", "customer_state",
+		customer_sys.serialize() if customer_sys else {})
 
 	# Atomik yazma: .tmp'ye yaz, başarıysa rename; başarısızsa .tmp sil
 	var write_err: Error = config.save(_save_tmp_path)

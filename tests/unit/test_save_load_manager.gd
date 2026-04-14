@@ -234,3 +234,83 @@ func test_economy_get_save_data_returns_balances() -> void:
 	var data: Dictionary = economy.get_save_data()
 	assert_eq(data.get("gold"), 400, "get_save_data gold = 400")
 	assert_eq(data.get("rozet"), 150, "get_save_data rozet = 150")
+
+
+# ── OvenManager round-trip ────────────────────────────────────────────────────
+
+func test_save_load_oven_slots_written_to_file_with_empty_state() -> void:
+	# Arrange
+	var oven := OvenManager.new()
+	add_child(oven)
+	manager._oven_ref = oven
+	_load_with()  # kayıt yok → varsayılanlar
+
+	# Act
+	manager.save_game()
+
+	# Assert
+	var cfg := ConfigFile.new()
+	cfg.load(TEST_SAVE_PATH)
+	var slots: Array = cfg.get_value("gameplay", "oven_slots", [])
+	assert_eq(slots.size(), 1, "Başlangıç aktif slot sayısı 1")
+	assert_eq(slots[0].get("state", ""), "EMPTY", "Boş slot EMPTY olarak kaydedildi")
+	oven.queue_free()
+
+
+func test_save_load_oven_ready_slot_restored_on_load() -> void:
+	# Arrange: READY slot içeren kayıt dosyası
+	var cfg := ConfigFile.new()
+	cfg.set_value("meta", "save_version", 2)
+	cfg.set_value("economy", "gold", 0)
+	cfg.set_value("economy", "rozet", 0)
+	cfg.set_value("time", "last_seen_unix", 0)
+	cfg.set_value("gameplay", "oven_slots", [{
+		"slot_id": 0,
+		"state": "READY",
+		"recipe_id": &"ekmek",
+		"bake_start_timestamp": 0,
+		"bake_time_seconds": 60.0,
+		"gold_reward": 500,
+	}])
+	var oven := OvenManager.new()
+	add_child(oven)
+	manager._oven_ref = oven
+
+	# Act
+	_load_with(cfg)
+
+	# Assert
+	assert_eq(oven._slots[0].state, BakingSlot.State.READY,
+		"READY slot yüklemede restore edildi")
+	assert_eq(oven._slots[0].gold_reward, 500, "gold_reward restore edildi")
+	oven.queue_free()
+
+
+func test_save_load_oven_baking_slot_completes_after_offline_8h() -> void:
+	# Arrange: 8 saat önce başlamış pişirme (bake_time=60s) → offline tamamlanmalı
+	var now_unix: int = Time.get_unix_time_from_system()
+	var start_ts: int = now_unix - 28800  # 8 saat önce
+	var cfg := ConfigFile.new()
+	cfg.set_value("meta", "save_version", 2)
+	cfg.set_value("economy", "gold", 0)
+	cfg.set_value("economy", "rozet", 0)
+	cfg.set_value("time", "last_seen_unix", start_ts)
+	cfg.set_value("gameplay", "oven_slots", [{
+		"slot_id": 0,
+		"state": "BAKING",
+		"recipe_id": &"ekmek",
+		"bake_start_timestamp": start_ts,
+		"bake_time_seconds": 60.0,
+		"gold_reward": 200,
+	}])
+	var oven := OvenManager.new()
+	add_child(oven)
+	manager._oven_ref = oven
+
+	# Act
+	_load_with(cfg)
+
+	# Assert: geçen süre 28800s >> bake_time 60s → pişirme tamamlandı
+	assert_eq(oven._slots[0].state, BakingSlot.State.READY,
+		"8 saatlik offline sonrası BAKING → READY")
+	oven.queue_free()
