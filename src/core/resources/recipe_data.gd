@@ -19,6 +19,18 @@ extends Resource
 ## Pişirme süresi (saniye). Fırın Sıcaklığı upgrade'i bu değeri çarpar.
 @export var bake_time_seconds: float = 60.0
 
+## Tarif tier'ı (1–4). gold_value formülünde kullanılır: base_value * (1 + tier * 0.5).
+@export var tier: int = 1
+
+## Kilit koşulları. UnlockConditionResolver (D-14) bu listeyi AND mantığıyla değerlendirir.
+@export var unlock_conditions: Array[UnlockCondition] = []
+
+## AVAILABLE → UNLOCKED geçişinde harcanacak özel malzeme ID'si. &"" → gerekmez.
+@export var required_ingredient: StringName = &""
+
+## Harcanacak malzeme miktarı. required_ingredient &"" ise göz ardı edilir.
+@export var ingredient_cost: int = 0
+
 ## Bu tarifte sadece bu lokasyon açıksa kullanılabilir. "" → her yerde.
 @export var location_id: StringName = &""
 
