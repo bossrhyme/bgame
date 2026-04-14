@@ -74,11 +74,12 @@ Sprint 1 gerçekleşen: 9 task / oturum. Sprint 2 tahminleri bu baza göre yapı
 
 ## Definition of Done
 
-- [ ] S2-01 – S2-05 (Must Have) tamamlandı
-- [ ] S2-06 SaveLoadManager entegrasyonu tamamlandı
-- [ ] Tüm tamamlanan tasklar GDD acceptance criteria ile karşılaştırıldı
-- [ ] GUT testleri yazıldı; 0 failure
-- [ ] S1 veya S2 bug yok
-- [ ] `SaveLoadManager` save_version 2'ye çıkarıldı (OvenManager entegrasyonuyla şema değişti)
+- [x] S2-01 – S2-05 (Must Have) tamamlandı
+- [x] S2-06 SaveLoadManager entegrasyonu tamamlandı
+- [x] S2-07 Unlock/Condition Resolver tamamlandı
+- [x] Tüm tamamlanan tasklar GDD acceptance criteria ile karşılaştırıldı
+- [x] GUT testleri yazıldı; 0 failure
+- [x] S1 veya S2 bug yok
+- [x] `SaveLoadManager` save_version 2'ye çıkarıldı (OvenManager entegrasyonuyla şema değişti)
 - [ ] Upgrade Tree 3^n maliyet formülü için sayısal simülasyon belgesi oluşturuldu
-- [ ] Kod commit edildi ve push edildi
+- [x] Kod commit edildi ve push edildi
