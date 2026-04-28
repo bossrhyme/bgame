@@ -40,8 +40,8 @@ Sprint 1 gerçekleşen: 9 task / oturum. Sprint 2 tahminleri bu baza göre yapı
 
 | ID | Task | Agent/Owner | Est. Gün | Bağımlılıklar | Acceptance Criteria |
 |----|------|-------------|----------|---------------|---------------------|
-| S2-08 | Employee System implementasyonu | godot-specialist | 1.0 | Economy ✅, TimeTracking ✅ | Çalışan kiralanınca oven efficiency_multiplier güncellenir; GUT testleri yeşil |
-| S2-09 | UI/HUD System iskelet | godot-specialist | 0.5 | Economy ✅ | Gold/Rozet HUD node'ları var; gold_changed sinyalini dinleyip günceller |
+| S2-08 ✅ | Employee System implementasyonu | godot-specialist | 1.0 | Economy ✅, TimeTracking ✅ | Çalışan kiralanınca oven efficiency_multiplier güncellenir; GUT testleri yeşil |
+| S2-09 ✅ | UI/HUD System iskelet | godot-specialist | 0.5 | Economy ✅ | Gold/Rozet HUD node'ları var; gold_changed sinyalini dinleyip günceller |
 
 ---
 
