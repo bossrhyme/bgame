@@ -2,10 +2,10 @@
 
 **Status:** In Progress
 **Created:** 2026-04-03
-**Updated:** 2026-04-28 (S4-06)
+**Updated:** 2026-04-28 (S5-04)
 **Source Concept:** `design/gdd/bread-master-core-design.md`
 **Total Systems:** 29
-**Designed:** 27 / 29
+**Designed:** 29 / 29 ✅
 **Implemented:** 18 / 29
 **Monetization:** Rewarded Ad (IAP yok — zaman yatırımı = kazanım modeli)
 
@@ -50,10 +50,10 @@ katmanları arasında temiz bir sırayla tasarlanabilir.
 | 23 | Sound & Animation System | Audio | Vertical Slice | Implemented | [sound-animation-system.md](sound-animation-system.md) | Audio Bus/Mixer, Oven/Baking |
 | 24 | Notification System | UI | Vertical Slice | Implemented | [notification-system.md](notification-system.md) | Time Tracking, Offline Production |
 | 25 | Ad Monetization System | Economy | Vertical Slice | Designed | [ad-monetization-system.md](ad-monetization-system.md) | Economy, Offline Production, Daily Task |
-| 26 | Tutorial/Onboarding System | Meta | Vertical Slice | Designed | [tutorial-onboarding-system.md](tutorial-onboarding-system.md) | Economy, Oven/Baking, Recipe, Customer, Upgrade, UI/HUD, Save/Load |
-| 27 | Delivery System | Gameplay | Alpha | Designed | [delivery-system.md](delivery-system.md) | Economy, Upgrade Tree, Time Tracking |
-| 28 | Seasonal Events System | Gameplay | Alpha | Not Started | — | Customer/Order, Time Tracking |
-| 29 | Performance Monitoring | Meta | Alpha | Not Started | — | Tüm sistemler |
+| 26 | Tutorial/Onboarding System | Meta | Vertical Slice | Implemented | [tutorial-onboarding-system.md](tutorial-onboarding-system.md) | Economy, Oven/Baking, Recipe, Customer, Upgrade, UI/HUD, Save/Load |
+| 27 | Delivery System | Gameplay | Alpha | Implemented | [delivery-system.md](delivery-system.md) | Economy, Upgrade Tree, Time Tracking |
+| 28 | Seasonal Events System | Gameplay | Alpha | Designed | [seasonal-events-system.md](seasonal-events-system.md) | Economy, Time Tracking, Daily Task, Recipe |
+| 29 | Performance Monitoring | Meta | Alpha | Implemented | [performance-monitoring.md](performance-monitoring.md) | Tüm sistemler |
 
 ---
 
@@ -219,10 +219,10 @@ Delivery System, Seasonal Events System, Performance Monitoring
 
 | Tier | Toplam | Tasarlandı | Implemente Edildi |
 |------|--------|-----------|-------------------|
-| MVP | 15 | 15 | 15 ✅ |
-| Vertical Slice | 11 | 11 ✅ | 8 |
-| Alpha | 3 | 1 | 0 |
-| **Toplam** | **29** | **27** | **23** |
+| MVP | 15 | 15 ✅ | 15 ✅ |
+| Vertical Slice | 11 | 11 ✅ | 10 |
+| Alpha | 3 | 3 ✅ | 2 |
+| **Toplam** | **29** | **29 ✅** | **27** |
 
 **Sprint 3 (2026-05-08 – 2026-05-21) ilerleme:**
 - S3-01 Offline Production System ✅ (impl + GUT)
@@ -242,15 +242,21 @@ Delivery System, Seasonal Events System, Performance Monitoring
 - S4-05 Tutorial/Onboarding System ✅ (GDD tasarım)
 - S4-06 Delivery System ✅ (GDD tasarım)
 
+**Sprint 5 (2026-06-05 – 2026-06-18) ilerleme:**
+- S5-01 Tutorial/Onboarding System ✅ (impl + 28 GUT testi)
+- S5-02 Delivery System ✅ (impl + 30 GUT testi)
+- S5-03 Seasonal Events System ✅ (GDD tasarım)
+- S5-04 Performance Monitoring ✅ (GDD + iskelet impl)
+
 > **Not:** GDD yazımı `/design-system [sistem-adı]` komutuyla başlatılır.
 > Her sistem tasarlandığında bu tablodaki durum güncellenir.
 
 ---
 
-## Sonraki Adımlar (Sprint 5+)
+## Sonraki Adımlar (Sprint 6+)
 
-- [ ] Tutorial/Onboarding System impl (Sprint 5)
-- [ ] Delivery System impl (Alpha)
-- [ ] Seasonal Events System GDD (Alpha)
-- [ ] Performance Monitoring GDD (Alpha)
-- [ ] Ad Monetization System impl (AdMob SDK entegrasyonu — Alpha)
+- [ ] Ad Monetization System iskelet impl (SDK bağımsız stub)
+- [ ] Seasonal Events System impl
+- [ ] Ad Monetization System impl (AdMob SDK entegrasyonu)
+- [ ] Playtest: ekonomi dengesi, lokasyon koşulları, upgrade curve
+- [ ] Performance Monitoring: gerçek cihaz profili (min-spec Android)
