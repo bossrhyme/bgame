@@ -2,11 +2,11 @@
 
 **Status:** In Progress
 **Created:** 2026-04-03
-**Updated:** 2026-04-28 (S5-04)
+**Updated:** 2026-04-28 (S6-03)
 **Source Concept:** `design/gdd/bread-master-core-design.md`
 **Total Systems:** 29
 **Designed:** 29 / 29 ✅
-**Implemented:** 18 / 29
+**Implemented:** 29 / 29 ✅
 **Monetization:** Rewarded Ad (IAP yok — zaman yatırımı = kazanım modeli)
 
 ---
@@ -220,9 +220,9 @@ Delivery System, Seasonal Events System, Performance Monitoring
 | Tier | Toplam | Tasarlandı | Implemente Edildi |
 |------|--------|-----------|-------------------|
 | MVP | 15 | 15 ✅ | 15 ✅ |
-| Vertical Slice | 11 | 11 ✅ | 10 |
-| Alpha | 3 | 3 ✅ | 2 |
-| **Toplam** | **29** | **29 ✅** | **27** |
+| Vertical Slice | 11 | 11 ✅ | 11 ✅ |
+| Alpha | 3 | 3 ✅ | 3 ✅ |
+| **Toplam** | **29** | **29 ✅** | **29 ✅** |
 
 **Sprint 3 (2026-05-08 – 2026-05-21) ilerleme:**
 - S3-01 Offline Production System ✅ (impl + GUT)
@@ -248,15 +248,20 @@ Delivery System, Seasonal Events System, Performance Monitoring
 - S5-03 Seasonal Events System ✅ (GDD tasarım)
 - S5-04 Performance Monitoring ✅ (GDD + iskelet impl)
 
+**Sprint 6 (2026-06-19 – 2026-07-02) ilerleme:**
+- S6-01 Seasonal Events System ✅ (impl + 34 GUT testi)
+- S6-02 Playtest-01 Ekonomi Dengesi ✅ (B2/B3/B5/B6 denge düzeltmeleri uygulandı)
+- S6-03 CI Test Runner ✅ (tools/ci/run_tests.sh + .gut_config.json)
+
 > **Not:** GDD yazımı `/design-system [sistem-adı]` komutuyla başlatılır.
 > Her sistem tasarlandığında bu tablodaki durum güncellenir.
 
 ---
 
-## Sonraki Adımlar (Sprint 6+)
+## Sonraki Adımlar (Sprint 7 — Polish & Release)
 
-- [ ] Ad Monetization System iskelet impl (SDK bağımsız stub)
-- [ ] Seasonal Events System impl
-- [ ] Ad Monetization System impl (AdMob SDK entegrasyonu)
-- [ ] Playtest: ekonomi dengesi, lokasyon koşulları, upgrade curve
+- [ ] Ad Monetization: gerçek AdMob SDK entegrasyonu
 - [ ] Performance Monitoring: gerçek cihaz profili (min-spec Android)
+- [ ] Playtest-02: gerçek cihaz oturumu ile denge doğrulama
+- [ ] UI polish: Tutorial tooltip görsel tasarımı
+- [ ] Release: store page hazırlığı, sertifikasyon kontrol listesi

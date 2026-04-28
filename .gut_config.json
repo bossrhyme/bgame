@@ -1,0 +1,11 @@
+{
+  "dirs": ["tests/unit"],
+  "prefix": "test_",
+  "suffix": ".gd",
+  "include_subdirs": true,
+  "log_level": 1,
+  "should_maximize": false,
+  "compact_mode": false,
+  "junit_xml_file": "test-results/gut_results.xml",
+  "junit_xml_timestamp": false
+}

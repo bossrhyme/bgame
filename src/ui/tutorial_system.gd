@@ -59,7 +59,7 @@ const HINTS: Array[StringName] = [
 	&"hint_daily_task",
 ]
 
-const STARTING_GOLD: int = 30
+const STARTING_GOLD: int = 50
 const SKIP_BUTTON_DELAY_SEC: float = 5.0
 
 # ── State ──────────────────────────────────────────────────────────────────────

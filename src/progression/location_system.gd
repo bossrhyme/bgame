@@ -35,9 +35,10 @@ const LOCATION_CATEGORY: Dictionary = {
 const PRESTIGE_ROZET_MULTIPLIER: int = 10
 
 ## Lokasyon unlock için minimum satış sayıları (GDD F-1).
+## B2/B3 denge düzeltmesi — playtest-01.md önerisi.
 const SALE_REQ: Dictionary = {
-	&"inner_anatolia": 50,
-	&"istanbul":       100,
+	&"inner_anatolia": 30,
+	&"istanbul":       60,
 	&"paris":          150,
 	&"rome":           200,
 }
@@ -194,7 +195,7 @@ func _check_conditions(location_id: StringName) -> bool:
 		&"istanbul":
 			var oc_level: int = upgrade.get_current_level(&"oven_capacity") if upgrade else 0
 			return (_category_sales.get(&"wheat", 0) >= SALE_REQ[&"istanbul"]
-				and oc_level >= 2)
+				and oc_level >= 1)
 
 		&"paris":
 			var sw_level: int = upgrade.get_current_level(&"showcase_width") if upgrade else 0

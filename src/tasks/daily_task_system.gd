@@ -66,20 +66,20 @@ var _economy_ref: EconomySystem = null
 
 ## [type, difficulty, base_target, reward_gold]
 const _TASK_TEMPLATES: Array = [
-	# EASY
-	[TaskType.SELL_BREAD,     TaskDifficulty.EASY,   50,  50],
+	# EASY — B5: SELL_BREAD hedefleri playtest-01.md önerisine göre düşürüldü
+	[TaskType.SELL_BREAD,     TaskDifficulty.EASY,   20,  50],
 	[TaskType.BAKE_COMPLETE,  TaskDifficulty.EASY,    5,  50],
 	[TaskType.SERVE_CUSTOMER, TaskDifficulty.EASY,    3,  50],
 	[TaskType.EARN_GOLD,      TaskDifficulty.EASY,  200,  50],
 	[TaskType.SPEND_GOLD,     TaskDifficulty.EASY,  150,  50],
 	# MEDIUM
-	[TaskType.SELL_BREAD,     TaskDifficulty.MEDIUM, 100, 100],
+	[TaskType.SELL_BREAD,     TaskDifficulty.MEDIUM,  50, 100],
 	[TaskType.BAKE_COMPLETE,  TaskDifficulty.MEDIUM,  10, 100],
 	[TaskType.SERVE_CUSTOMER, TaskDifficulty.MEDIUM,   5, 100],
 	[TaskType.EARN_GOLD,      TaskDifficulty.MEDIUM, 500, 100],
 	[TaskType.SPEND_GOLD,     TaskDifficulty.MEDIUM, 300, 100],
 	# HARD
-	[TaskType.SELL_BREAD,     TaskDifficulty.HARD,   200, 200],
+	[TaskType.SELL_BREAD,     TaskDifficulty.HARD,   100, 200],
 	[TaskType.BAKE_COMPLETE,  TaskDifficulty.HARD,    20, 200],
 	[TaskType.SERVE_CUSTOMER, TaskDifficulty.HARD,    10, 200],
 	[TaskType.EARN_GOLD,      TaskDifficulty.HARD,  1000, 200],
