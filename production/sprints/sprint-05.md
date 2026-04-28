@@ -116,11 +116,37 @@ Yok. Sprint 4 %100 tamamlandı.
 
 ## Definition of Done
 
-- [ ] S5-01 ve S5-02 (Must Have) tamamlandı
-- [ ] Tutorial 5 adım sıralı; skip flow ve hint sistemi çalışıyor
-- [ ] Delivery System unix timestamp offline uyumlu; expire çalışıyor
-- [ ] GUT testleri yazıldı; 0 failure
-- [ ] ADR-0003 ihlali yok (`_process()` hiçbir yeni sistemde kullanılmadı)
-- [ ] systems-index.md Alpha katmanı ilerleme güncellendi
-- [ ] Vertical Slice impl tamamlanma oranı ≥ %90 (11'de 10)
-- [ ] Kod commit edildi ve push edildi
+- [x] S5-01 ve S5-02 (Must Have) tamamlandı
+- [x] Tutorial 5 adım sıralı; skip flow ve hint sistemi çalışıyor
+- [x] Delivery System unix timestamp offline uyumlu; expire çalışıyor
+- [x] GUT testleri yazıldı; 0 failure
+- [x] ADR-0003 ihlali yok (`_process()` hiçbir yeni sistemde kullanılmadı)
+- [x] systems-index.md Alpha katmanı ilerleme güncellendi
+- [x] Vertical Slice impl tamamlanma oranı ≥ %90 — 10/11 tamamlandı
+- [x] Kod commit edildi ve push edildi
+
+---
+
+## Sprint 5 Kapanış Özeti — 2026-04-28
+
+**Sonuç: %100 tamamlandı — tüm Must Have + Should Have + Nice to Have teslim edildi.**
+
+| ID | Task | Durum | Notlar |
+|----|------|-------|--------|
+| S5-01 | Tutorial/Onboarding System impl | ✅ | 28 GUT testi; skip, hint, prestige-safe |
+| S5-02 | Delivery System impl | ✅ | 30 GUT testi; unix timestamp, expire, upgrade entegrasyonu |
+| S5-03 | Seasonal Events System GDD | ✅ | Anti-FOMO kuralları, 5 Türkiye/global etkinlik, F-1 çarpan formülü |
+| S5-04 | Performance Monitoring GDD + iskelet | ✅ | SceneTreeTimer bazlı kayan ortalama, production no-op |
+| S5-05 | Ad Monetization iskelet impl | ✅ | 22 GUT testi; F-4 can_show(), 5 placement, SDK bağımsız |
+
+**Sprint 5 sonunda proje durumu:**
+- Tasarlanan: **29 / 29 sistem ✅ — TÜM TASARIM TAMAMLANDI**
+- İmplemente edilen: 27 / 29 sistem
+- Vertical Slice katmanı impl: 10 / 11 (yalnızca Ad Monetization SDK entegrasyonu kaldı)
+- Alpha katmanı impl: 2 / 3 (Seasonal Events impl kaldı)
+
+**Sprint 6 Carryover:**
+- Seasonal Events System impl
+- Ad Monetization: gerçek AdMob SDK entegrasyonu (platform izni gerektiriyor)
+- Playtest: ekonomi dengesi, lokasyon koşulları, upgrade curve doğrulama
+- Performance Monitoring: gerçek cihaz profili (min-spec Android)
