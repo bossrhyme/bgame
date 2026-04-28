@@ -38,6 +38,7 @@ var _employee_ref: EmployeeManager = null
 var _registry_ref: ContentRegistry = null
 var _task_ref: DailyTaskSystem = null
 var _location_ref: LocationSystem = null
+var _tutorial_ref: TutorialSystem = null
 
 ## Salt okunur state erişimi.
 var state: State:
@@ -126,6 +127,12 @@ func _get_location_system() -> LocationSystem:
 	return get_node_or_null("/root/LocationSystem") as LocationSystem
 
 
+func _get_tutorial_system() -> TutorialSystem:
+	if _tutorial_ref:
+		return _tutorial_ref
+	return get_node_or_null("/root/TutorialSystem") as TutorialSystem
+
+
 func _clean_stale_tmp() -> void:
 	if FileAccess.file_exists(_save_tmp_path):
 		var dir := DirAccess.open(_save_tmp_path.get_base_dir())
@@ -178,6 +185,7 @@ func _load_game() -> void:
 		"employee_state": config.get_value("gameplay", "employee_state", {}),
 		"daily_task_state": config.get_value("gameplay", "daily_task_state", {}),
 		"location_state": config.get_value("progression", "location_state", {}),
+		"tutorial_state": config.get_value("meta", "tutorial_state", {}),
 	}
 	_finish_load(save_data)
 
@@ -259,6 +267,11 @@ func _finish_load(data: Dictionary) -> void:
 	if location_sys:
 		location_sys.deserialize(data.get("location_state", {}))
 
+	# 10. TutorialSystem — tutorial ve hint geçmişi
+	var tutorial_sys := _get_tutorial_system()
+	if tutorial_sys:
+		tutorial_sys.deserialize(data.get("tutorial_state", {}))
+
 	_state = State.READY
 
 
@@ -336,6 +349,10 @@ func _save_game_internal() -> void:
 	var location_sys := _get_location_system()
 	config.set_value("progression", "location_state",
 		location_sys.serialize() if location_sys else {})
+
+	var tutorial_sys := _get_tutorial_system()
+	config.set_value("meta", "tutorial_state",
+		tutorial_sys.serialize() if tutorial_sys else {})
 
 	# Atomik yazma: .tmp'ye yaz, başarıysa rename; başarısızsa .tmp sil
 	var write_err: Error = config.save(_save_tmp_path)
