@@ -2,10 +2,10 @@
 
 **Status:** In Progress
 **Created:** 2026-04-03
-**Updated:** 2026-04-28 (S4-04)
+**Updated:** 2026-04-28 (S4-06)
 **Source Concept:** `design/gdd/bread-master-core-design.md`
 **Total Systems:** 29
-**Designed:** 25 / 29
+**Designed:** 27 / 29
 **Implemented:** 18 / 29
 **Monetization:** Rewarded Ad (IAP yok — zaman yatırımı = kazanım modeli)
 
@@ -50,8 +50,8 @@ katmanları arasında temiz bir sırayla tasarlanabilir.
 | 23 | Sound & Animation System | Audio | Vertical Slice | Implemented | [sound-animation-system.md](sound-animation-system.md) | Audio Bus/Mixer, Oven/Baking |
 | 24 | Notification System | UI | Vertical Slice | Implemented | [notification-system.md](notification-system.md) | Time Tracking, Offline Production |
 | 25 | Ad Monetization System | Economy | Vertical Slice | Designed | [ad-monetization-system.md](ad-monetization-system.md) | Economy, Offline Production, Daily Task |
-| 26 | Tutorial/Onboarding System | Meta | Vertical Slice | Not Started | — | Tüm MVP sistemleri |
-| 27 | Delivery System | Gameplay | Alpha | Not Started | — | Upgrade Tree |
+| 26 | Tutorial/Onboarding System | Meta | Vertical Slice | Designed | [tutorial-onboarding-system.md](tutorial-onboarding-system.md) | Economy, Oven/Baking, Recipe, Customer, Upgrade, UI/HUD, Save/Load |
+| 27 | Delivery System | Gameplay | Alpha | Designed | [delivery-system.md](delivery-system.md) | Economy, Upgrade Tree, Time Tracking |
 | 28 | Seasonal Events System | Gameplay | Alpha | Not Started | — | Customer/Order, Time Tracking |
 | 29 | Performance Monitoring | Meta | Alpha | Not Started | — | Tüm sistemler |
 
@@ -220,9 +220,9 @@ Delivery System, Seasonal Events System, Performance Monitoring
 | Tier | Toplam | Tasarlandı | Implemente Edildi |
 |------|--------|-----------|-------------------|
 | MVP | 15 | 15 | 15 ✅ |
-| Vertical Slice | 11 | 10 | 8 |
-| Alpha | 3 | 0 | 0 |
-| **Toplam** | **29** | **25** | **23** |
+| Vertical Slice | 11 | 11 ✅ | 8 |
+| Alpha | 3 | 1 | 0 |
+| **Toplam** | **29** | **27** | **23** |
 
 **Sprint 3 (2026-05-08 – 2026-05-21) ilerleme:**
 - S3-01 Offline Production System ✅ (impl + GUT)
@@ -239,15 +239,18 @@ Delivery System, Seasonal Events System, Performance Monitoring
 - S4-02 Collection/Dex System ✅ (GDD + impl + GUT, 22 test)
 - S4-03 Motivation Hooks System ✅ (GDD + impl + GUT, 12 test)
 - S4-04 Ad Monetization System ✅ (GDD tasarım)
+- S4-05 Tutorial/Onboarding System ✅ (GDD tasarım)
+- S4-06 Delivery System ✅ (GDD tasarım)
 
 > **Not:** GDD yazımı `/design-system [sistem-adı]` komutuyla başlatılır.
 > Her sistem tasarlandığında bu tablodaki durum güncellenir.
 
 ---
 
-## Sonraki Adımlar (Sprint 4 devamı / Sprint 5)
+## Sonraki Adımlar (Sprint 5+)
 
-- [ ] Tutorial/Onboarding System GDD + impl (S4-05, Nice to Have)
-- [ ] Delivery System GDD (S4-06, Nice to Have)
+- [ ] Tutorial/Onboarding System impl (Sprint 5)
+- [ ] Delivery System impl (Alpha)
 - [ ] Seasonal Events System GDD (Alpha)
+- [ ] Performance Monitoring GDD (Alpha)
 - [ ] Ad Monetization System impl (AdMob SDK entegrasyonu — Alpha)
