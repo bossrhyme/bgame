@@ -104,11 +104,40 @@ Yok. Sprint 3 tüm task'larla (%100) kapandı.
 
 ## Definition of Done
 
-- [ ] S4-01 ve S4-02 (Must Have) tamamlandı
-- [ ] Prestij sıfırlaması GUT entegrasyon testinden geçti
-- [ ] Tüm tamamlanan task'lar GDD acceptance criteria ile karşılaştırıldı
-- [ ] GUT testleri yazıldı; 0 failure
-- [ ] ADR-0003 ihlali yok
-- [ ] UnlockConditionResolver prestige_count koşulu mevcut testleri kırmıyor
-- [ ] systems-index.md Vertical Slice ilerleme güncel
-- [ ] Kod commit edildi ve push edildi
+- [x] S4-01 ve S4-02 (Must Have) tamamlandı
+- [x] Prestij sıfırlaması GUT entegrasyon testinden geçti
+- [x] Tüm tamamlanan task'lar GDD acceptance criteria ile karşılaştırıldı
+- [x] GUT testleri yazıldı; 0 failure
+- [x] ADR-0003 ihlali yok
+- [x] UnlockConditionResolver prestige_count koşulu mevcut testleri kırmıyor
+- [x] systems-index.md Vertical Slice ilerleme güncel
+- [x] Kod commit edildi ve push edildi
+
+---
+
+## Sprint 4 Kapanış Özeti — 2026-04-28
+
+**Sonuç: %100 tamamlandı — tüm Must Have + Should Have + Nice to Have teslim edildi.**
+
+| ID | Task | Durum | Notlar |
+|----|------|-------|--------|
+| S4-01 | Location/Prestige System impl | ✅ | 32 GUT testi, prestige_count serialize/deserialize |
+| S4-02 | Collection/Dex System GDD + impl | ✅ | 22 GUT testi, prestige sonrası koleksiyon korunuyor |
+| S4-03 | Motivation Hooks System GDD + impl | ✅ | 12 GUT testi, session_idle iskelet hazır |
+| S4-04 | Ad Monetization System GDD | ✅ | 5 yerleşim, cooldown, fill rate=0 graceful fallback |
+| S4-05 | Tutorial/Onboarding System GDD | ✅ | 5 adım, skip logic, hint sistemi |
+| S4-06 | Delivery System GDD | ✅ | 3 teslimat türü, unix timestamp timer, expire |
+
+**Velocity:** 8.0 gün tahmin → 8.5 gün fiili (Nice to Have'ler dahil) — hız sağlıklı.
+
+**Sprint 4 sonunda proje durumu:**
+- Tasarlanan: 27 / 29 sistem
+- İmplemente edilen: 23 / 29 sistem
+- Vertical Slice katmanı tasarım: **%100 tamamlandı**
+- Vertical Slice katmanı impl: 8 / 11 (Tutorial, Ad Monetization, Delivery kaldı)
+
+**Sprint 5 Carryover:**
+- Tutorial/Onboarding System impl (VS — kritik)
+- Delivery System impl (Alpha)
+- Seasonal Events System GDD (Alpha)
+- Performance Monitoring GDD (Alpha)
