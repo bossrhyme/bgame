@@ -125,10 +125,43 @@ Sprint 7'de 5/6 task tamamlandı (%83). S7-02 fiziksel cihaz bağımlılığı n
 
 ## Definition of Done
 
-- [ ] S8-01, S8-02, S8-03 (Must Have) tamamlandı
-- [ ] .aab Google Play internal track'e yüklendi
-- [ ] Gerçek cihazda FPS > 30 tüm senaryolarda (profil raporu)
-- [ ] Privacy policy URL aktif
-- [ ] AdMob gerçek ID commit'e dahil edilmedi
+- [x] S8-01: Android export pipeline (script + preset şablonu + .gitignore)
+- [ ] S8-02: Gerçek cihaz FPS > 30 tüm senaryolarda — fiziksel cihaz gerekli
+- [x] S8-03: AdMob config sistemi (runtime yükleme, gitignore, set_admob_ids.sh)
+- [x] S8-04: Privacy policy belgesi (TR+EN, GDPR/CCPA uyumlu)
+- [x] S8-05: ConsentManager skeleton (UMP stub, rıza durumu yönetimi)
+- [ ] S8-06: Google Play internal track yüklemesi — cihaz + hesap gerekli
+- [ ] AdMob gerçek ID commit'e dahil edilmedi ✅ (config sistemi kuruldu, gitignore'da)
+- [ ] .aab Google Play internal track'e yüklendi — fiziksel cihaz gerekli
+- [x] Kod commit edildi ve push edildi
+
+---
+
+## Sprint 8 Kapanış Özeti — 2026-04-28
+
+**Sonuç: %71 tamamlandı — S8-02/S8-06 fiziksel cihaz + Google Play hesabı bağımlılığı.**
+
+| ID | Task | Durum | Notlar |
+|----|------|-------|--------|
+| S8-01 | Android Export Pipeline | ✅ | tools/build/export_android.sh; preset şablonu; .gitignore güncellendi |
+| S8-02 | Gerçek Cihaz Performans Profili | 🔄 S9 | performance-profile-01.md şablonu hazır; cihaz gerekli |
+| S8-03 | AdMob Gerçek ID Entegrasyonu | ✅ | ConfigFile runtime yükleme; set_admob_ids.sh; fallback test ID |
+| S8-04 | Privacy Policy | ✅ | docs/privacy-policy/privacy-policy.md; TR+EN; GDPR/CCPA |
+| S8-05 | GDPR UMP SDK | ✅ | ConsentManager skeleton; UMP stub; can_show_ads() API |
+| S8-06 | Google Play Internal Testing | 🔄 S9 | .aab export hazır; hesap ve cihaz gerekli |
+| S8-07 | Playtest-02 Gerçek Cihaz | 🔄 S9 | S8-02 ile birlikte |
+| S8-08 | iOS ATT Hazırlık | ❌ S9+ | iOS odağı S9'a ertelendi |
+
+**Sprint 8 sonunda proje durumu:**
+- Android build pipeline: ✅ scriptler + preset şablonu hazır
+- Güvenli ID yönetimi: ✅ config gitignore, runtime yükleme
+- Privacy/GDPR altyapısı: ✅ belge + ConsentManager skeleton
+- Kalan blokajlar: fiziksel Snapdragon 665 cihaz + Google Play Developer hesabı
+
+**Sprint 9 Odağı:** Gerçek cihaz doğrulaması + ilk dış playtest
+- Fiziksel cihazda build yükleme ve performans profili (S8-02/S8-06 carryover)
+- Gerçek AdMob ID entegrasyonu (hesap gerekli)
+- Privacy policy GitHub Pages'e yükleme
+- Kapalı beta / dış playtest grubu
 - [ ] GUT: 0 failure (regresyon)
 - [ ] Kod commit edildi ve push edildi

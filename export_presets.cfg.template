@@ -1,0 +1,109 @@
+; export_presets.cfg.template — Android Export Preset Şablonu
+;
+; Gerçek export_presets.cfg gitignore'dadır (Godot keystore bilgisi içerir).
+; Bu şablonu referans alarak Godot Editor'da export preset oluşturun:
+;   Project → Export → Add → Android
+;
+; Zorunlu ayarlar (Godot Editor'da set edin):
+;   - Keystore > Release: KEYSTORE_PATH ortam değişkeninden
+;   - Keystore > Release User: KEYSTORE_ALIAS
+;   - Keystore > Release Password: KEYSTORE_PASS (Godot Editor'a kaydetme)
+;
+; Bu dosya commit edilebilir (gerçek değerler içermez).
+
+[preset.0]
+
+name="Android"
+platform="Android"
+runnable=true
+dedicated_server=false
+custom_features=""
+export_filter="all_resources"
+include_filter=""
+exclude_filter=""
+export_path="build/android/breadmaster.aab"
+encryption_include_filters=""
+encryption_exclude_filters=""
+encrypt_pck=false
+encrypt_directory=false
+
+[preset.0.options]
+
+custom_template/debug=""
+custom_template/release=""
+gradle_build/use_gradle_build=true
+gradle_build/gradle_build_directory="android"
+gradle_build/compress_native_libraries=false
+gradle_build/export_format=1
+gradle_build/min_sdk=24
+gradle_build/target_sdk=34
+architectures/armeabi-v7a=false
+architectures/arm64-v8a=true
+architectures/x86=false
+architectures/x86_64=false
+keystore/debug="res://android/debug.keystore"
+keystore/debug_user="androiddebugkey"
+keystore/debug_password="android"
+keystore/release=""
+keystore/release_user=""
+keystore/release_password=""
+version/code=1
+version/name="1.0.0"
+package/unique_name="com.bossrhyme.breadmaster"
+package/name="Ekmek Ustası"
+package/signed=true
+package/classify_as_game=true
+package/retain_data_on_uninstall=false
+package/exclude_from_recents=false
+package/show_in_android_tv=false
+package/show_as_launcher_app=false
+package/show_in_app_library=true
+package/meta_data=""
+package/permissions/internet=true
+package/permissions/access_network_state=true
+package/permissions/custom_permissions="android.permission.com.google.android.gms.permission.AD_ID"
+launcher_icons/main_192x192=""
+launcher_icons/adaptive_foreground_432x432=""
+launcher_icons/adaptive_background_432x432=""
+graphics/opengl_debug=false
+xr_features/xr_mode=0
+screen/immersive_mode=true
+screen/support_small=true
+screen/support_normal=true
+screen/support_large=true
+screen/support_xlarge=true
+user_data_backup/allow=false
+command_line/extra_args=""
+apk_expansion/enable=false
+apk_expansion/SALT=""
+apk_expansion/public_key=""
+permissions/custom_permissions=""
+plugins=""
+
+[preset.1]
+
+name="Android Release"
+platform="Android"
+runnable=false
+dedicated_server=false
+custom_features=""
+export_filter="all_resources"
+include_filter=""
+exclude_filter=""
+export_path="build/android/breadmaster.aab"
+encryption_include_filters=""
+encryption_exclude_filters=""
+encrypt_pck=false
+encrypt_directory=false
+
+[preset.1.options]
+
+; preset.0.options ile aynı; keystore alanları CI'da doldurulur
+gradle_build/use_gradle_build=true
+gradle_build/target_sdk=34
+architectures/arm64-v8a=true
+version/code=1
+version/name="1.0.0"
+package/unique_name="com.bossrhyme.breadmaster"
+package/name="Ekmek Ustası"
+package/signed=true

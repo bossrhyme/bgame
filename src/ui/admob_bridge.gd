@@ -4,25 +4,28 @@
 ## Placement ID ↔ ad_unit_id eşleşmesini yönetir.
 ## Production'da AdMobStub yerine gerçek GDExtension node kullanılır.
 ##
-## Gerçek entegrasyon adımları (S7-01):
-##   1. addons/admob_stub/ → gerçek AdMob GDExtension ile değiştir
-##   2. AD_UNIT_IDS içindeki TEST ID'leri → gerçek app ID'lerle değiştir
-##      (environment variable veya ayrı config; ASLA commit etme)
-##   3. Bu dosya değişmez — SDK değişimi şeffaftır
+## ID yükleme önceliği (S8-03):
+##   1. config/admob_ids.cfg (CI tarafından enjekte edilir, gitignore'da)
+##   2. TEST_AD_UNIT_IDS sabiti (stub / geliştirme ortamı)
 ##
 ## GDD: design/gdd/ad-monetization-system.md
 class_name AdMobBridge
 extends Node
 
-## Placement ID → ad_unit_id eşleşmesi.
+const CONFIG_PATH: String = "res://config/admob_ids.cfg"
+
+## Fallback test ID'leri — config dosyası yoksa kullanılır.
 ## TEST ID'ler: Google resmi test reklamları — gerçek gelir yok.
-const AD_UNIT_IDS: Dictionary = {
+const TEST_AD_UNIT_IDS: Dictionary = {
 	&"offline_boost": "ca-app-pub-3940256099942544/5224354917",
 	&"daily_bonus":   "ca-app-pub-3940256099942544/5224354917",
 	&"instant_bake":  "ca-app-pub-3940256099942544/5224354917",
 	&"vip_extend":    "ca-app-pub-3940256099942544/5224354917",
 	&"task_double":   "ca-app-pub-3940256099942544/5224354917",
 }
+
+## Runtime'da doldurulur: config dosyasından veya TEST_AD_UNIT_IDS'ten.
+var _ad_unit_ids: Dictionary = {}
 
 ## Tersine eşleşme: ad_unit_id → placement_id
 var _unit_to_placement: Dictionary = {}
@@ -34,6 +37,7 @@ var _ad_system: AdMonetizationSystem = null
 
 
 func _ready() -> void:
+	_load_ad_unit_ids()
 	_build_reverse_map()
 	_wire_admob()
 
@@ -48,7 +52,7 @@ func request_rewarded_ad(placement_id: StringName, context: Dictionary = {}) -> 
 	if not _ad_system.can_show(placement_id):
 		return
 
-	var unit_id: String = AD_UNIT_IDS.get(placement_id, "")
+	var unit_id: String = _ad_unit_ids.get(placement_id, "")
 	if unit_id.is_empty():
 		push_warning("AdMobBridge: Bilinmeyen placement '%s'" % placement_id)
 		return
@@ -104,10 +108,27 @@ func _on_ad_closed(ad_unit_id: String) -> void:
 
 # ── Internal ──────────────────────────────────────────────────────────────────
 
+func _load_ad_unit_ids() -> void:
+	var cfg := ConfigFile.new()
+	if cfg.load(CONFIG_PATH) == OK:
+		_ad_unit_ids.clear()
+		for key: String in TEST_AD_UNIT_IDS:
+			var val: String = cfg.get_value("placements", key, "")
+			if val.is_empty():
+				push_warning("AdMobBridge: Config'de '%s' eksik — test ID kullanılıyor" % key)
+				_ad_unit_ids[key] = TEST_AD_UNIT_IDS[key]
+			else:
+				_ad_unit_ids[key] = val
+		print("AdMobBridge: Gerçek AdMob ID'leri yüklendi (%s)" % CONFIG_PATH)
+	else:
+		_ad_unit_ids = TEST_AD_UNIT_IDS.duplicate()
+		print("AdMobBridge: Config bulunamadı — test ID'leri kullanılıyor")
+
+
 func _build_reverse_map() -> void:
 	_unit_to_placement.clear()
-	for p: StringName in AD_UNIT_IDS:
-		_unit_to_placement[AD_UNIT_IDS[p]] = p
+	for p: StringName in _ad_unit_ids:
+		_unit_to_placement[_ad_unit_ids[p]] = p
 
 
 func _resolve_placement(ad_unit_id: String) -> StringName:
@@ -125,7 +146,7 @@ func _wire_admob() -> void:
 	admob.ad_closed.connect(_on_ad_closed)
 
 	if _ad_system:
-		for p: StringName in AD_UNIT_IDS:
+		for p: StringName in _ad_unit_ids:
 			_ad_system.notify_ad_loaded(p)  # Başlangıçta mevcut say (stub için)
 
 

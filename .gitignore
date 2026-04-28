@@ -21,12 +21,12 @@ docs/IMPROVEMENTS-PROPOSAL.md
 docs/MULTI-STAGE-DOCUMENT-WORKFLOW.md
 
 # === Build Output ===
-build/
-builds/
-bin/
-obj/
-out/
-dist/
+/build/
+/builds/
+/bin/
+/obj/
+/out/
+/dist/
 *.exe
 *.dll
 *.so
@@ -40,14 +40,13 @@ export_presets.cfg
 # Uncomment if using Godot:
 # *.import
 
-# === Engine: Unity ===
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-[Ll]ogs/
-[Uu]ser[Ss]ettings/
+# === Engine: Unity === (kullanılmıyor — Godot projesi)
+# [Ll]ibrary/
+# [Tt]emp/
+# [Bb]uild/
+# [Bb]uilds/
+# [Ll]ogs/
+# [Uu]ser[Ss]ettings/
 *.csproj
 *.unityproj
 *.sln
@@ -110,6 +109,20 @@ node_modules/
 *.key
 credentials.json
 secrets.json
+
+# === Android Build Secrets (ASLA commit etme) ===
+*.keystore
+*.jks
+*.p12
+config/admob_ids.cfg
+android/key.properties
+
+# === Android Build Output ===
+build/android/
+android/build/
+
+# === iOS Build Output ===
+build/ios/
 
 # === Large Binary Assets (use Git LFS instead) ===
 # Uncomment and configure with Git LFS for your project:
