@@ -39,6 +39,7 @@ var _registry_ref: ContentRegistry = null
 var _task_ref: DailyTaskSystem = null
 var _location_ref: LocationSystem = null
 var _tutorial_ref: TutorialSystem = null
+var _delivery_ref: DeliverySystem = null
 
 ## Salt okunur state erişimi.
 var state: State:
@@ -133,6 +134,12 @@ func _get_tutorial_system() -> TutorialSystem:
 	return get_node_or_null("/root/TutorialSystem") as TutorialSystem
 
 
+func _get_delivery_system() -> DeliverySystem:
+	if _delivery_ref:
+		return _delivery_ref
+	return get_node_or_null("/root/DeliverySystem") as DeliverySystem
+
+
 func _clean_stale_tmp() -> void:
 	if FileAccess.file_exists(_save_tmp_path):
 		var dir := DirAccess.open(_save_tmp_path.get_base_dir())
@@ -185,7 +192,8 @@ func _load_game() -> void:
 		"employee_state": config.get_value("gameplay", "employee_state", {}),
 		"daily_task_state": config.get_value("gameplay", "daily_task_state", {}),
 		"location_state": config.get_value("progression", "location_state", {}),
-		"tutorial_state": config.get_value("meta", "tutorial_state", {}),
+		"tutorial_state":  config.get_value("meta", "tutorial_state", {}),
+		"delivery_state":  config.get_value("gameplay", "delivery_state", {}),
 	}
 	_finish_load(save_data)
 
@@ -272,6 +280,11 @@ func _finish_load(data: Dictionary) -> void:
 	if tutorial_sys:
 		tutorial_sys.deserialize(data.get("tutorial_state", {}))
 
+	# 11. DeliverySystem — aktif teslimat slot durumları
+	var delivery_sys := _get_delivery_system()
+	if delivery_sys:
+		delivery_sys.deserialize(data.get("delivery_state", {}))
+
 	_state = State.READY
 
 
@@ -353,6 +366,10 @@ func _save_game_internal() -> void:
 	var tutorial_sys := _get_tutorial_system()
 	config.set_value("meta", "tutorial_state",
 		tutorial_sys.serialize() if tutorial_sys else {})
+
+	var delivery_sys := _get_delivery_system()
+	config.set_value("gameplay", "delivery_state",
+		delivery_sys.serialize() if delivery_sys else {})
 
 	# Atomik yazma: .tmp'ye yaz, başarıysa rename; başarısızsa .tmp sil
 	var write_err: Error = config.save(_save_tmp_path)
