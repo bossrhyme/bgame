@@ -65,11 +65,15 @@ func do_harvest() -> int:
 
 ## Offline geçen süreyi uygular. initialize_from_save sırasında OvenManager çağırır.
 ## elapsed_seconds: şimdiki unix - bake_start_timestamp
-func apply_offline(elapsed_seconds: float, offline_cap: float) -> void:
+## speed_multiplier: 1.0 + Fırın Ustası efekti (GDD Offline Production F-1/F-2)
+func apply_offline(elapsed_seconds: float, offline_cap: float,
+		speed_multiplier: float = 1.0) -> void:
 	if state != State.BAKING:
 		return
 	var clamped: float = clampf(elapsed_seconds, 0.0, offline_cap)
-	var remaining: float = bake_time_seconds - clamped
+	var safe_mult: float = maxf(speed_multiplier, 0.01)
+	var effective_bake_time: float = bake_time_seconds / safe_mult
+	var remaining: float = effective_bake_time - clamped
 	if remaining <= 0.0:
 		_timer.stop()
 		state = State.READY

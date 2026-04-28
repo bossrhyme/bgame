@@ -34,6 +34,8 @@ var _oven_ref: OvenManager = null
 var _upgrade_ref: UpgradeTree = null
 var _recipe_ref: RecipeManager = null
 var _customer_ref: CustomerOrderSystem = null
+var _employee_ref: EmployeeManager = null
+var _registry_ref: ContentRegistry = null
 
 ## Salt okunur state erişimi.
 var state: State:
@@ -98,6 +100,18 @@ func _get_customer_system() -> CustomerOrderSystem:
 	return get_node_or_null("/root/CustomerOrderSystem") as CustomerOrderSystem
 
 
+func _get_employee_manager() -> EmployeeManager:
+	if _employee_ref:
+		return _employee_ref
+	return get_node_or_null("/root/EmployeeManager") as EmployeeManager
+
+
+func _get_registry() -> ContentRegistry:
+	if _registry_ref:
+		return _registry_ref
+	return get_node_or_null("/root/ContentRegistry") as ContentRegistry
+
+
 func _clean_stale_tmp() -> void:
 	if FileAccess.file_exists(_save_tmp_path):
 		var dir := DirAccess.open(_save_tmp_path.get_base_dir())
@@ -147,33 +161,58 @@ func _load_game() -> void:
 		"recipe_unlock_state": config.get_value("progression", "recipe_unlock_state", {}),
 		"ingredient_stock": config.get_value("progression", "ingredient_stock", {}),
 		"customer_state": config.get_value("gameplay", "customer_state", {}),
+		"employee_state": config.get_value("gameplay", "employee_state", {}),
 	}
 	_finish_load(save_data)
 
 
 func _finish_load(data: Dictionary) -> void:
-	# Economy (önce yüklenmeli — diğer sistemler bakiyeye bağımlı olabilir)
+	# 1. Economy (önce yüklenmeli — diğer sistemler bakiyeye bağımlı olabilir)
 	var econ := _get_economy()
 	if econ:
 		econ.initialize(data.get("gold", 0), data.get("rozet", 0))
 	else:
 		push_error("SaveLoadManager: Economy sistemi bulunamadı!")
 
-	# OvenManager — offline pişirme apply_offline() ile tamamlanır
+	# 2. EmployeeManager — Offline pişirme hız bonusu için ücret kesiminden ÖNCE yüklenmeli
+	#    (GDD Offline Production #16: speed_multiplier hesabı ücret kesiminden önce yapılır)
+	var employee_mgr := _get_employee_manager()
+	if employee_mgr:
+		var registry := _get_registry()
+		if registry:
+			var all_emp: Array[EmployeeData] = registry.get_all_employees()
+			var data_map: Dictionary = {}
+			for emp: EmployeeData in all_emp:
+				data_map[emp.id] = emp
+			employee_mgr.deserialize(data.get("employee_state", {}), data_map)
+		elif not data.get("employee_state", {}).is_empty():
+			push_warning("SaveLoadManager: ContentRegistry yok — employee_state yoksayıldı")
+
+	# 3. OvenManager — speed_multiplier Fırın Ustası efektinden alınır; ücret kesiminden önce
 	var oven := _get_oven()
 	if oven:
+		var speed_mult: float = 1.0
+		if employee_mgr:
+			speed_mult = 1.0 + employee_mgr.get_effect(GameEnums.EmployeeRole.OVEN_MASTER)
 		var raw: Array = data.get("oven_slots", [])
 		var typed: Array[Dictionary] = []
 		for entry in raw:
 			typed.append(entry)
-		oven.initialize_from_save(typed)
+		oven.initialize_from_save(typed, speed_mult)
 
-	# UpgradeTree — Config Resource'ları anında günceller
+	# 4. Employee günlük ücret kesimi — offline üretim hesabından SONRA (GDD §3)
+	if employee_mgr:
+		var elapsed_days: int = 0
+		if last_seen_unix > 0:
+			elapsed_days = int(float(Time.get_unix_time_from_system() - last_seen_unix) / 86400.0)
+		employee_mgr.process_daily_wages(elapsed_days)
+
+	# 5. UpgradeTree — Config Resource'ları anında günceller
 	var upgrade_tree := _get_upgrade_tree()
 	if upgrade_tree:
 		upgrade_tree.deserialize({"levels": data.get("upgrade_levels", {})})
 
-	# RecipeManager — kilit durumu ve malzeme stoğu
+	# 6. RecipeManager — kilit durumu ve malzeme stoğu
 	var recipe_mgr := _get_recipe_manager()
 	if recipe_mgr:
 		recipe_mgr.deserialize({
@@ -181,7 +220,7 @@ func _finish_load(data: Dictionary) -> void:
 			"ingredient_stock": data.get("ingredient_stock", {}),
 		})
 
-	# CustomerOrderSystem — aktif siparişler ve memnuniyet
+	# 7. CustomerOrderSystem — aktif siparişler ve memnuniyet
 	var customer_sys := _get_customer_system()
 	if customer_sys:
 		customer_sys.deserialize(data.get("customer_state", {}))
@@ -252,6 +291,10 @@ func _save_game_internal() -> void:
 	var customer_sys := _get_customer_system()
 	config.set_value("gameplay", "customer_state",
 		customer_sys.serialize() if customer_sys else {})
+
+	var employee_mgr := _get_employee_manager()
+	config.set_value("gameplay", "employee_state",
+		employee_mgr.serialize() if employee_mgr else {})
 
 	# Atomik yazma: .tmp'ye yaz, başarıysa rename; başarısızsa .tmp sil
 	var write_err: Error = config.save(_save_tmp_path)

@@ -94,7 +94,9 @@ func unlock_slot(slot_index: int) -> void:
 
 ## Kayıttan slot durumlarını yükler ve offline pişirmeyi uygular.
 ## SaveLoadManager tarafından startup'ta çağrılır.
-func initialize_from_save(slot_data: Array[Dictionary]) -> void:
+## speed_multiplier: 1.0 + Fırın Ustası efekti — GDD Offline Production #16 F-1
+func initialize_from_save(slot_data: Array[Dictionary],
+		speed_multiplier: float = 1.0) -> void:
 	var now_unix: int = Time.get_unix_time_from_system()
 	for data in slot_data:
 		var id: int = data.get("slot_id", -1)
@@ -110,7 +112,7 @@ func initialize_from_save(slot_data: Array[Dictionary]) -> void:
 				slot.bake_start_timestamp = data.get("bake_start_timestamp", now_unix)
 				slot.state = BakingSlot.State.BAKING
 				var elapsed: float = float(now_unix - slot.bake_start_timestamp)
-				slot.apply_offline(elapsed, OFFLINE_CAP_SECONDS)
+				slot.apply_offline(elapsed, OFFLINE_CAP_SECONDS, speed_multiplier)
 			"READY":
 				slot.recipe_id = data.get("recipe_id", &"")
 				slot.bake_time_seconds = data.get("bake_time_seconds", 0.0)
