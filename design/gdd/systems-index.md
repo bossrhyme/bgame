@@ -2,11 +2,11 @@
 
 **Status:** In Progress
 **Created:** 2026-04-03
-**Updated:** 2026-04-28
+**Updated:** 2026-04-28 (S4-04)
 **Source Concept:** `design/gdd/bread-master-core-design.md`
 **Total Systems:** 29
-**Designed:** 24 / 29
-**Implemented:** 15 / 29 (MVP tamamlandı)
+**Designed:** 25 / 29
+**Implemented:** 18 / 29
 **Monetization:** Rewarded Ad (IAP yok — zaman yatırımı = kazanım modeli)
 
 ---
@@ -41,15 +41,15 @@ katmanları arasında temiz bir sırayla tasarlanabilir.
 | 14 | Unlock/Condition Resolver | Core | MVP | Designed | [unlock-condition-resolver.md](unlock-condition-resolver.md) | Recipe, Upgrade Tree, Location |
 | 15 | UI/HUD System | UI | MVP | Designed | [ui-hud-system.md](ui-hud-system.md) | Economy, Customer/Order, Upgrade Tree |
 | 16 | Offline Production System | Gameplay | Vertical Slice | Implemented | [offline-production-system.md](offline-production-system.md) | Time Tracking, Oven/Baking, Employee |
-| 17 | Location/Prestige System | Progression | Vertical Slice | Designed | [location-prestige-system.md](location-prestige-system.md) | Recipe, Upgrade Tree, Oven/Baking |
-| 18 | Collection/Dex System | Progression | Vertical Slice | Not Started | — | Recipe, Location |
+| 17 | Location/Prestige System | Progression | Vertical Slice | Implemented | [location-prestige-system.md](location-prestige-system.md) | Recipe, Upgrade Tree, Oven/Baking |
+| 18 | Collection/Dex System | Progression | Vertical Slice | Implemented | [collection-dex-system.md](collection-dex-system.md) | Recipe, Location |
 | 19 | Daily Task System | Gameplay | Vertical Slice | Implemented | [daily-task-system.md](daily-task-system.md) | Time Tracking, Economy |
 | 20 | Visual Progression System | UI | Vertical Slice | Implemented | [visual-progression-system.md](visual-progression-system.md) | Upgrade Tree |
-| 21 | Motivation Hooks System | UI | Vertical Slice | Not Started | — | UI/HUD, Progression sistemleri |
+| 21 | Motivation Hooks System | UI | Vertical Slice | Implemented | [motivation-hooks-system.md](motivation-hooks-system.md) | Economy, Upgrade Tree, Oven/Baking, Daily Task |
 | 22 | VFX/Particle System | Core | Vertical Slice | Implemented | [vfx-particle-system.md](vfx-particle-system.md) | Animation State Machine, Economy |
 | 23 | Sound & Animation System | Audio | Vertical Slice | Implemented | [sound-animation-system.md](sound-animation-system.md) | Audio Bus/Mixer, Oven/Baking |
 | 24 | Notification System | UI | Vertical Slice | Implemented | [notification-system.md](notification-system.md) | Time Tracking, Offline Production |
-| 25 | Ad Monetization System | Economy | Vertical Slice | Not Started | — | Economy, UI/HUD |
+| 25 | Ad Monetization System | Economy | Vertical Slice | Designed | [ad-monetization-system.md](ad-monetization-system.md) | Economy, Offline Production, Daily Task |
 | 26 | Tutorial/Onboarding System | Meta | Vertical Slice | Not Started | — | Tüm MVP sistemleri |
 | 27 | Delivery System | Gameplay | Alpha | Not Started | — | Upgrade Tree |
 | 28 | Seasonal Events System | Gameplay | Alpha | Not Started | — | Customer/Order, Time Tracking |
@@ -220,9 +220,9 @@ Delivery System, Seasonal Events System, Performance Monitoring
 | Tier | Toplam | Tasarlandı | Implemente Edildi |
 |------|--------|-----------|-------------------|
 | MVP | 15 | 15 | 15 ✅ |
-| Vertical Slice | 11 | 9 | 5 |
+| Vertical Slice | 11 | 10 | 8 |
 | Alpha | 3 | 0 | 0 |
-| **Toplam** | **29** | **24** | **20** |
+| **Toplam** | **29** | **25** | **23** |
 
 **Sprint 3 (2026-05-08 – 2026-05-21) ilerleme:**
 - S3-01 Offline Production System ✅ (impl + GUT)
@@ -234,17 +234,20 @@ Delivery System, Seasonal Events System, Performance Monitoring
 - S3-07 Sound & Animation System ✅ (impl iskeleti)
 - S3-08 Systems Index güncelleme ✅
 
+**Sprint 4 (2026-05-22 – 2026-06-04) ilerleme:**
+- S4-01 Location/Prestige System ✅ (impl + GUT, 32 test)
+- S4-02 Collection/Dex System ✅ (GDD + impl + GUT, 22 test)
+- S4-03 Motivation Hooks System ✅ (GDD + impl + GUT, 12 test)
+- S4-04 Ad Monetization System ✅ (GDD tasarım)
+
 > **Not:** GDD yazımı `/design-system [sistem-adı]` komutuyla başlatılır.
 > Her sistem tasarlandığında bu tablodaki durum güncellenir.
 
 ---
 
-## Sonraki Adımlar (Sprint 4+)
+## Sonraki Adımlar (Sprint 4 devamı / Sprint 5)
 
-- [ ] Collection/Dex System GDD + impl
-- [ ] Motivation Hooks System GDD + impl
-- [ ] Ad Monetization System GDD + impl
-- [ ] Tutorial/Onboarding System GDD + impl
-- [ ] Location/Prestige System impl (GDD tamamlandı, S3-06)
-- [ ] Delivery System GDD (Alpha)
+- [ ] Tutorial/Onboarding System GDD + impl (S4-05, Nice to Have)
+- [ ] Delivery System GDD (S4-06, Nice to Have)
 - [ ] Seasonal Events System GDD (Alpha)
+- [ ] Ad Monetization System impl (AdMob SDK entegrasyonu — Alpha)
