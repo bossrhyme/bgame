@@ -80,21 +80,21 @@ func _set_state(new_state: ConsentState) -> void:
 
 func _notify_ad_bridge() -> void:
 	var bridge := _get_ad_bridge()
-	if not bridge:
-		return
-	# AdMobBridge henüz set_consent_state API'si yok — S8-05 tamamlandığında eklenecek
-	# bridge.set_consent_state(can_show_ads())
+	if bridge:
+		bridge.set_consent_state(can_show_ads())
 
 
 func _persist_state() -> void:
-	# SaveLoadManager ile entegrasyon — basit prefs kaydı
-	# Production'da ConfigFile veya SaveLoadManager üzerinden
-	pass
+	var cfg := ConfigFile.new()
+	cfg.set_value("consent", CONSENT_KEY, int(_state))
+	cfg.save("user://%s.cfg" % CONSENT_KEY)
 
 
 func _load_persisted_state() -> void:
-	# Önceki oturumdan rıza durumu yüklenir
-	pass
+	var cfg := ConfigFile.new()
+	if cfg.load("user://%s.cfg" % CONSENT_KEY) == OK:
+		var saved: int = cfg.get_value("consent", CONSENT_KEY, int(ConsentState.UNKNOWN))
+		_state = saved as ConsentState
 
 
 func _get_ad_bridge() -> AdMobBridge:

@@ -34,6 +34,7 @@ var _pending_context: Dictionary = {}   # StringName placement_id → context di
 
 var _admob: AdMobStub = null
 var _ad_system: AdMonetizationSystem = null
+var _consent_ok: bool = true   # false → reklam gösterimini engelle (GDPR)
 
 
 func _ready() -> void:
@@ -44,12 +45,21 @@ func _ready() -> void:
 
 # ── Public API ────────────────────────────────────────────────────────────────
 
+## ConsentManager'dan rıza durumu güncellenir.
+func set_consent_state(allowed: bool) -> void:
+	_consent_ok = allowed
+
+
 ## Rewarded reklam isteği. context: ödül hesabı için veri (offline_gold vb.)
 func request_rewarded_ad(placement_id: StringName, context: Dictionary = {}) -> void:
-	if not _ad_system:
+	var ad_sys := _get_ad_system()
+	if not ad_sys:
 		push_error("AdMobBridge: AdMonetizationSystem bağlı değil")
 		return
-	if not _ad_system.can_show(placement_id):
+	if not _consent_ok:
+		push_warning("AdMobBridge: GDPR rızası yok — reklam engellendi")
+		return
+	if not ad_sys.can_show(placement_id):
 		return
 
 	var unit_id: String = _ad_unit_ids.get(placement_id, "")
@@ -64,7 +74,7 @@ func request_rewarded_ad(placement_id: StringName, context: Dictionary = {}) -> 
 		admob.load_rewarded_ad(unit_id)
 	else:
 		push_warning("AdMobBridge: AdMob SDK bağlı değil — teklif atlandı")
-		_ad_system.notify_ad_failed(placement_id)
+		ad_sys.notify_ad_failed(placement_id)
 
 
 # ── AdMob Signal Handlers ─────────────────────────────────────────────────────
@@ -73,8 +83,9 @@ func _on_ad_loaded(ad_unit_id: String) -> void:
 	var placement_id := _resolve_placement(ad_unit_id)
 	if placement_id == &"":
 		return
-	_ad_system.notify_ad_loaded(placement_id)
-	# Yükleme tamamlandı → otomatik göster
+	var ad_sys := _get_ad_system()
+	if ad_sys:
+		ad_sys.notify_ad_loaded(placement_id)
 	var admob := _get_admob()
 	if admob:
 		admob.show_rewarded_ad(ad_unit_id)
@@ -82,9 +93,12 @@ func _on_ad_loaded(ad_unit_id: String) -> void:
 
 func _on_ad_failed_to_load(ad_unit_id: String, _error_code: int, _error_message: String) -> void:
 	var placement_id := _resolve_placement(ad_unit_id)
-	if placement_id != &"":
-		_ad_system.notify_ad_failed(placement_id)
-		_pending_context.erase(placement_id)
+	if placement_id == &"":
+		return
+	var ad_sys := _get_ad_system()
+	if ad_sys:
+		ad_sys.notify_ad_failed(placement_id)
+	_pending_context.erase(placement_id)
 
 
 func _on_user_earned_reward(ad_unit_id: String, _reward_type: String, _reward_amount: int) -> void:
@@ -93,17 +107,20 @@ func _on_user_earned_reward(ad_unit_id: String, _reward_type: String, _reward_am
 		return
 	var ctx: Dictionary = _pending_context.get(placement_id, {})
 	_pending_context.erase(placement_id)
-	_ad_system.on_ad_rewarded(placement_id, ctx)
+	var ad_sys := _get_ad_system()
+	if ad_sys:
+		ad_sys.on_ad_rewarded(placement_id, ctx)
 
 
 func _on_ad_closed(ad_unit_id: String) -> void:
 	var placement_id := _resolve_placement(ad_unit_id)
 	if placement_id == &"":
 		return
-	# Ödül callback gelmediyse → skip
 	if _pending_context.has(placement_id):
 		_pending_context.erase(placement_id)
-		_ad_system.on_ad_closed(placement_id)
+		var ad_sys := _get_ad_system()
+		if ad_sys:
+			ad_sys.on_ad_closed(placement_id)
 
 
 # ── Internal ──────────────────────────────────────────────────────────────────
@@ -145,12 +162,19 @@ func _wire_admob() -> void:
 	admob.user_earned_reward.connect(_on_user_earned_reward)
 	admob.ad_closed.connect(_on_ad_closed)
 
-	if _ad_system:
+	var ad_sys := _get_ad_system()
+	if ad_sys:
 		for p: StringName in _ad_unit_ids:
-			_ad_system.notify_ad_loaded(p)  # Başlangıçta mevcut say (stub için)
+			ad_sys.notify_ad_loaded(p)  # Başlangıçta mevcut say (stub için)
 
 
 func _get_admob() -> AdMobStub:
 	if _admob:
 		return _admob
 	return get_node_or_null("/root/AdMobStub") as AdMobStub
+
+
+func _get_ad_system() -> AdMonetizationSystem:
+	if _ad_system:
+		return _ad_system
+	return get_node_or_null("/root/AdMonetizationSystem") as AdMonetizationSystem
