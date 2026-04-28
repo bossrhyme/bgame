@@ -40,6 +40,7 @@ var _task_ref: DailyTaskSystem = null
 var _location_ref: LocationSystem = null
 var _tutorial_ref: TutorialSystem = null
 var _delivery_ref: DeliverySystem = null
+var _seasonal_ref: SeasonalEventSystem = null
 
 ## Salt okunur state erişimi.
 var state: State:
@@ -140,6 +141,12 @@ func _get_delivery_system() -> DeliverySystem:
 	return get_node_or_null("/root/DeliverySystem") as DeliverySystem
 
 
+func _get_seasonal_event_system() -> SeasonalEventSystem:
+	if _seasonal_ref:
+		return _seasonal_ref
+	return get_node_or_null("/root/SeasonalEventSystem") as SeasonalEventSystem
+
+
 func _clean_stale_tmp() -> void:
 	if FileAccess.file_exists(_save_tmp_path):
 		var dir := DirAccess.open(_save_tmp_path.get_base_dir())
@@ -193,7 +200,8 @@ func _load_game() -> void:
 		"daily_task_state": config.get_value("gameplay", "daily_task_state", {}),
 		"location_state": config.get_value("progression", "location_state", {}),
 		"tutorial_state":  config.get_value("meta", "tutorial_state", {}),
-		"delivery_state":  config.get_value("gameplay", "delivery_state", {}),
+		"delivery_state":   config.get_value("gameplay", "delivery_state", {}),
+		"seasonal_state":   config.get_value("gameplay", "seasonal_state", {}),
 	}
 	_finish_load(save_data)
 
@@ -285,6 +293,11 @@ func _finish_load(data: Dictionary) -> void:
 	if delivery_sys:
 		delivery_sys.deserialize(data.get("delivery_state", {}))
 
+	# 12. SeasonalEventSystem — rozet talep ve tarif kilit geçmişi
+	var seasonal_sys := _get_seasonal_event_system()
+	if seasonal_sys:
+		seasonal_sys.deserialize(data.get("seasonal_state", {}))
+
 	_state = State.READY
 
 
@@ -370,6 +383,10 @@ func _save_game_internal() -> void:
 	var delivery_sys := _get_delivery_system()
 	config.set_value("gameplay", "delivery_state",
 		delivery_sys.serialize() if delivery_sys else {})
+
+	var seasonal_sys := _get_seasonal_event_system()
+	config.set_value("gameplay", "seasonal_state",
+		seasonal_sys.serialize() if seasonal_sys else {})
 
 	# Atomik yazma: .tmp'ye yaz, başarıysa rename; başarısızsa .tmp sil
 	var write_err: Error = config.save(_save_tmp_path)
