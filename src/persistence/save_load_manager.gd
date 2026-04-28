@@ -36,6 +36,7 @@ var _recipe_ref: RecipeManager = null
 var _customer_ref: CustomerOrderSystem = null
 var _employee_ref: EmployeeManager = null
 var _registry_ref: ContentRegistry = null
+var _task_ref: DailyTaskSystem = null
 
 ## Salt okunur state erişimi.
 var state: State:
@@ -112,6 +113,12 @@ func _get_registry() -> ContentRegistry:
 	return get_node_or_null("/root/ContentRegistry") as ContentRegistry
 
 
+func _get_task_system() -> DailyTaskSystem:
+	if _task_ref:
+		return _task_ref
+	return get_node_or_null("/root/DailyTaskSystem") as DailyTaskSystem
+
+
 func _clean_stale_tmp() -> void:
 	if FileAccess.file_exists(_save_tmp_path):
 		var dir := DirAccess.open(_save_tmp_path.get_base_dir())
@@ -162,6 +169,7 @@ func _load_game() -> void:
 		"ingredient_stock": config.get_value("progression", "ingredient_stock", {}),
 		"customer_state": config.get_value("gameplay", "customer_state", {}),
 		"employee_state": config.get_value("gameplay", "employee_state", {}),
+		"daily_task_state": config.get_value("gameplay", "daily_task_state", {}),
 	}
 	_finish_load(save_data)
 
@@ -225,6 +233,18 @@ func _finish_load(data: Dictionary) -> void:
 	if customer_sys:
 		customer_sys.deserialize(data.get("customer_state", {}))
 		customer_sys.update_order_states()  # Offline süre dolmuş siparişleri temizle
+
+	# 8. DailyTaskSystem — kayıt yükle, geçen günlere göre sıfırla
+	var task_sys := _get_task_system()
+	if task_sys:
+		task_sys.deserialize(data.get("daily_task_state", {}))
+		var task_last_reset: int = task_sys.last_reset_unix
+		var task_elapsed_days: int = 0
+		if task_last_reset > 0:
+			task_elapsed_days = int(float(Time.get_unix_time_from_system() - task_last_reset) / 86400.0)
+		elif last_seen_unix > 0:
+			task_elapsed_days = 1  # ilk açılış — görevleri başlat
+		task_sys.check_daily_reset(task_elapsed_days)
 
 	_state = State.READY
 
@@ -295,6 +315,10 @@ func _save_game_internal() -> void:
 	var employee_mgr := _get_employee_manager()
 	config.set_value("gameplay", "employee_state",
 		employee_mgr.serialize() if employee_mgr else {})
+
+	var task_sys := _get_task_system()
+	config.set_value("gameplay", "daily_task_state",
+		task_sys.serialize() if task_sys else {})
 
 	# Atomik yazma: .tmp'ye yaz, başarıysa rename; başarısızsa .tmp sil
 	var write_err: Error = config.save(_save_tmp_path)
