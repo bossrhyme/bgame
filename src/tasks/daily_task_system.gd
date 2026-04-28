@@ -132,6 +132,15 @@ func get_tasks() -> Array[TaskEntry]:
 	return _tasks.duplicate()
 
 
+## Tamamlanmamış görev sayısını döner.
+func get_incomplete_count() -> int:
+	var count: int = 0
+	for task: TaskEntry in _tasks:
+		if not task.is_complete:
+			count += 1
+	return count
+
+
 ## Kayıt formatında veriyi döner.
 func serialize() -> Dictionary:
 	var tasks_data: Array = []
