@@ -13,6 +13,7 @@ enum ConditionType {
 	SALE_COUNT,          ## Belirli sayıda ekmek satılınca
 	LOCATION_UNLOCKED,   ## Belirli bir lokasyon açılınca
 	INGREDIENT_OWNED,    ## Belirli bir özel malzeme edinilince
+	PRESTIGE_COUNT,      ## Minimum prestij sayısına ulaşılınca
 }
 
 @export var condition_type: ConditionType = ConditionType.SALE_COUNT
@@ -34,3 +35,8 @@ enum ConditionType {
 
 ## Sahip olunması gereken özel malzeme ID'si.
 @export var required_ingredient_id: StringName = &""
+
+# ── PRESTIGE_COUNT alanları ───────────────────────────────────────────────────
+
+## Minimum prestij sayısı.
+@export var required_prestige_count: int = 0

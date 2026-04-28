@@ -148,6 +148,13 @@ func get_ingredient_count(ingredient_id: StringName) -> int:
 # ── Kayıt/Yükleme ─────────────────────────────────────────────────────────────
 
 ## SaveLoadManager tarafından çağrılır: runtime durumunu Dictionary olarak döner.
+## Yalnızca prestij sıfırlaması için: tüm tarifleri LOCKED durumuna döndürür.
+## LocationSystem.do_prestige() dışında çağrılmamalıdır.
+func reset_all_to_locked() -> void:
+	for id: StringName in _unlock_state:
+		_unlock_state[id] = RecipeStatus.LOCKED
+
+
 func serialize() -> Dictionary:
 	return {
 		"unlock_state": _unlock_state.duplicate(),

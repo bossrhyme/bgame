@@ -37,6 +37,7 @@ var _customer_ref: CustomerOrderSystem = null
 var _employee_ref: EmployeeManager = null
 var _registry_ref: ContentRegistry = null
 var _task_ref: DailyTaskSystem = null
+var _location_ref: LocationSystem = null
 
 ## Salt okunur state erişimi.
 var state: State:
@@ -119,6 +120,12 @@ func _get_task_system() -> DailyTaskSystem:
 	return get_node_or_null("/root/DailyTaskSystem") as DailyTaskSystem
 
 
+func _get_location_system() -> LocationSystem:
+	if _location_ref:
+		return _location_ref
+	return get_node_or_null("/root/LocationSystem") as LocationSystem
+
+
 func _clean_stale_tmp() -> void:
 	if FileAccess.file_exists(_save_tmp_path):
 		var dir := DirAccess.open(_save_tmp_path.get_base_dir())
@@ -170,6 +177,7 @@ func _load_game() -> void:
 		"customer_state": config.get_value("gameplay", "customer_state", {}),
 		"employee_state": config.get_value("gameplay", "employee_state", {}),
 		"daily_task_state": config.get_value("gameplay", "daily_task_state", {}),
+		"location_state": config.get_value("progression", "location_state", {}),
 	}
 	_finish_load(save_data)
 
@@ -246,6 +254,11 @@ func _finish_load(data: Dictionary) -> void:
 			task_elapsed_days = 1  # ilk açılış — görevleri başlat
 		task_sys.check_daily_reset(task_elapsed_days)
 
+	# 9. LocationSystem — lokasyon durumu ve prestij sayacı
+	var location_sys := _get_location_system()
+	if location_sys:
+		location_sys.deserialize(data.get("location_state", {}))
+
 	_state = State.READY
 
 
@@ -319,6 +332,10 @@ func _save_game_internal() -> void:
 	var task_sys := _get_task_system()
 	config.set_value("gameplay", "daily_task_state",
 		task_sys.serialize() if task_sys else {})
+
+	var location_sys := _get_location_system()
+	config.set_value("progression", "location_state",
+		location_sys.serialize() if location_sys else {})
 
 	# Atomik yazma: .tmp'ye yaz, başarıysa rename; başarısızsa .tmp sil
 	var write_err: Error = config.save(_save_tmp_path)

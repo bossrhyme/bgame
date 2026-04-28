@@ -92,6 +92,13 @@ func get_save_data() -> Dictionary:
 	return {"gold": _gold, "rozet": _rozet}
 
 
+## Yalnızca prestij sıfırlaması için: gold'u sıfırlar, Rozet korunur.
+## LocationSystem.do_prestige() dışında çağrılmamalıdır.
+func reset_for_prestige() -> void:
+	_gold = 0
+	gold_changed.emit(_gold)
+
+
 ## Belirtilen miktarda Rozet harcamayı dener.
 ## Başarılıysa true + rozet_changed; yetersizse false + sinyal yok.
 ## amount <= 0 veya LOADING → false.

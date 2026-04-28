@@ -160,6 +160,14 @@ func serialize() -> Dictionary:
 	return {"levels": _levels.duplicate()}
 
 
+## Yalnızca prestij sıfırlaması için: tüm seviyeleri 0'a indirir.
+## LocationSystem.do_prestige() dışında çağrılmamalıdır.
+func reset_levels() -> void:
+	for id: StringName in _levels:
+		_levels[id] = 0
+	_apply_effects()
+
+
 ## SaveLoadManager tarafından çağrılır. Bozuk level → max_level'a sabitlenir.
 func deserialize(data: Dictionary) -> void:
 	var saved_levels: Dictionary = data.get("levels", {})

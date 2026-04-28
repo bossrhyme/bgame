@@ -18,6 +18,7 @@ signal conditions_met(recipe_id: StringName)
 
 ## Dependency injection. null ise autoload'dan alınır.
 var _recipe_ref: RecipeManager = null
+var _location_ref: LocationSystem = null
 
 ## Satış sayaçları: recipe_id → toplam satış adedi.
 ## record_sale() çağrısıyla güncellenir.
@@ -52,6 +53,14 @@ func evaluate(cond: UnlockCondition) -> bool:
 					+ "INGREDIENT_OWNED koşulu false döndü")
 				return false
 			return recipe_mgr.get_ingredient_count(cond.required_ingredient_id) > 0
+
+		UnlockCondition.ConditionType.PRESTIGE_COUNT:
+			var loc := _get_location_system()
+			if not loc:
+				push_warning("UnlockConditionResolver: LocationSystem bulunamadı — " \
+					+ "PRESTIGE_COUNT koşulu false döndü")
+				return false
+			return loc.prestige_count >= cond.required_prestige_count
 
 	push_warning("UnlockConditionResolver: Bilinmeyen koşul tipi: %d" \
 		% cond.condition_type)
@@ -111,6 +120,12 @@ func _get_recipe_manager() -> RecipeManager:
 	if _recipe_ref:
 		return _recipe_ref
 	return get_node_or_null("/root/RecipeManager") as RecipeManager
+
+
+func _get_location_system() -> LocationSystem:
+	if _location_ref:
+		return _location_ref
+	return get_node_or_null("/root/LocationSystem") as LocationSystem
 
 
 ## Tüm izlenen recipe'leri kontrol eder; karşılananları sinyalle bildirir.
